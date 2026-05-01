@@ -1,35 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}Employee Login - ennojoum{% endblock %}
+{% block title %}Connexion Employé — Ennojoum{% endblock %}
 
 {% block content %}
 <section class="login-page">
     <div class="login-card fade-in">
-        <div class="login-icon">👨‍🔧</div>
-        <h2>Employee Login</h2>
-        <p class="muted">Sign in to manage car washes</p>
+        <h2 data-i18n="login.employee.title">Connexion Employé</h2>
+        <p class="muted" data-i18n="login.employee.subtitle">Connectez-vous pour gérer les lavages</p>
 
         <form method="POST" action="{{ url_for('employee_login') }}" class="form">
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username" data-i18n="login.field.username">Nom d'utilisateur</label>
                 <input type="text" id="username" name="username"
-                       placeholder="e.g. admin1" required autofocus>
+                       placeholder="admin1" required autofocus>
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-i18n="login.field.password">Mot de passe</label>
                 <input type="password" id="password" name="password"
                        placeholder="••••" required>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-full">Login</button>
+            <button type="submit" class="btn btn-primary btn-full" data-i18n="login.btn.login">Connexion</button>
         </form>
 
         <div class="hint">
-            <small>Default credentials: <strong>admin1 / 1234</strong></small>
+            <small><span data-i18n="login.hint">Identifiants par défaut :</span> <strong>admin1 / 1234</strong></small>
         </div>
 
-        <a href="{{ url_for('home') }}" class="back-link">← Back to home</a>
+        <a href="{{ url_for('home') }}" class="back-link" data-i18n="login.back">← Retour à l'accueil</a>
     </div>
 </section>
 {% endblock %}

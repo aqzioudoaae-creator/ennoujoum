@@ -1,40 +1,40 @@
 {% extends "base.html" %}
 
-{% block title %}Employee Dashboard - ennojoum{% endblock %}
+{% block title %}Tableau de bord Employé — Ennojoum{% endblock %}
 
 {% block content %}
 <section class="dashboard">
 
     <div class="dashboard-header fade-in">
-        <h2>Employee Dashboard</h2>
-        <p class="muted">Register new cars and update their wash status</p>
+        <h2 data-i18n="emp.dash.title">Tableau de bord Employé</h2>
+        <p class="muted" data-i18n="emp.dash.subtitle">Enregistrez de nouvelles voitures et mettez à jour leur statut de lavage</p>
     </div>
 
     <!-- ============== REGISTER NEW CAR ============== -->
     <div class="card slide-up">
-        <h3 class="card-title">➕ Register New Car</h3>
+        <h3 class="card-title" data-i18n="emp.register.title">Enregistrer une nouvelle voiture</h3>
 
         <form method="POST" action="{{ url_for('register_car') }}" class="form grid-form">
             <div class="form-group">
-                <label for="car_type">Car Type</label>
+                <label for="car_type" data-i18n="emp.field.car_type">Type de voiture</label>
                 <select id="car_type" name="car_type" required>
-                    <option value="">-- Select --</option>
-                    <option value="Small">Small</option>
-                    <option value="Large">Large</option>
+                    <option value="" data-i18n="emp.opt.select">-- Sélectionner --</option>
+                    <option value="Small" data-i18n="emp.opt.small">Petite</option>
+                    <option value="Large" data-i18n="emp.opt.large">Grande</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="phone">Phone Number</label>
+                <label for="phone" data-i18n="emp.field.phone">Numéro de téléphone</label>
                 <input type="text" id="phone" name="phone"
                        placeholder="+212 6 12 34 56 78" required>
             </div>
 
             <div class="form-group">
-                <label for="wash_type">Wash Type</label>
+                <label for="wash_type" data-i18n="emp.field.wash_type">Type de lavage</label>
                 <select id="wash_type" name="wash_type" required
                         onchange="updatePrice(this.value)">
-                    <option value="">-- Select --</option>
+                    <option value="" data-i18n="emp.opt.select">-- Sélectionner --</option>
                     {% for w, p in prices.items() %}
                         <option value="{{ w }}" data-price="{{ p }}">
                             {{ w }} — {{ p }} DH
@@ -44,13 +44,13 @@
             </div>
 
             <div class="form-group">
-                <label>Price</label>
+                <label data-i18n="emp.field.price">Prix</label>
                 <div id="price-display" class="price-box">0 DH</div>
             </div>
 
             <div class="form-group full-width">
-                <button type="submit" class="btn btn-primary btn-full">
-                    Register & Send WhatsApp 📲
+                <button type="submit" class="btn btn-primary btn-full" data-i18n="emp.btn.register">
+                    Enregistrer et envoyer WhatsApp
                 </button>
             </div>
         </form>
@@ -58,21 +58,24 @@
 
     <!-- ============== ACTIVE CARS LIST ============== -->
     <div class="card slide-up" style="animation-delay:.1s">
-        <h3 class="card-title">🚗 All Cars ({{ cars|length }})</h3>
+        <h3 class="card-title">
+            <span data-i18n="emp.cars.title">Toutes les voitures</span>
+            ({{ cars|length }})
+        </h3>
 
         {% if cars %}
         <div class="table-wrapper">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Code</th>
-                        <th>Car</th>
-                        <th>Phone</th>
-                        <th>Wash</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th data-i18n="th.code">Code</th>
+                        <th data-i18n="th.car">Voiture</th>
+                        <th data-i18n="th.phone">Téléphone</th>
+                        <th data-i18n="th.wash">Lavage</th>
+                        <th data-i18n="th.price">Prix</th>
+                        <th data-i18n="th.status">Statut</th>
+                        <th data-i18n="th.date">Date</th>
+                        <th data-i18n="th.actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,7 +90,8 @@
                             <span class="status-badge
                                 {% if c.status == 'Started' %}status-started
                                 {% elif c.status == 'In Progress' %}status-progress
-                                {% else %}status-finished{% endif %}">
+                                {% else %}status-finished{% endif %}"
+                                data-status-text="{{ c.status }}">
                                 {{ c.status }}
                             </span>
                         </td>
@@ -99,18 +103,19 @@
                                   class="inline-form">
                                 <select name="status" onchange="this.form.submit()"
                                         class="select-small">
-                                    <option {% if c.status=='Started'    %}selected{% endif %}>Started</option>
-                                    <option {% if c.status=='In Progress'%}selected{% endif %}>In Progress</option>
-                                    <option {% if c.status=='Finished'   %}selected{% endif %}>Finished</option>
+                                    <option value="Started"     data-i18n-status="Started"     {% if c.status=='Started'    %}selected{% endif %}>Started</option>
+                                    <option value="In Progress" data-i18n-status="In Progress" {% if c.status=='In Progress'%}selected{% endif %}>In Progress</option>
+                                    <option value="Finished"    data-i18n-status="Finished"    {% if c.status=='Finished'   %}selected{% endif %}>Finished</option>
                                 </select>
                             </form>
 
                             <!-- Resend tracking code on WhatsApp -->
                             <a class="btn-mini"
-                               title="Send tracking code on WhatsApp"
+                               data-i18n-title="emp.send.code"
+                               title="Envoyer le code de suivi sur WhatsApp"
                                target="_blank" rel="noopener"
                                href="{{ build_whatsapp_link(c.phone, 'Your car tracking code is: ' ~ c.code) }}">
-                                📲
+                                WhatsApp
                             </a>
 
                             <!-- Send reminder -->
@@ -118,8 +123,10 @@
                             <form method="POST"
                                   action="{{ url_for('send_reminder', car_id=c.id) }}"
                                   class="inline-form">
-                                <button type="submit" class="btn-mini" title="Send reminder">
-                                    🔔
+                                <button type="submit" class="btn-mini"
+                                        data-i18n-title="emp.send.reminder"
+                                        title="Envoyer un rappel">
+                                    Rappel
                                 </button>
                             </form>
                             {% endif %}
@@ -130,7 +137,7 @@
             </table>
         </div>
         {% else %}
-            <p class="empty-state">No cars registered yet. Add the first one above!</p>
+            <p class="empty-state" data-i18n="emp.empty">Aucune voiture enregistrée pour l'instant. Ajoutez la première ci-dessus.</p>
         {% endif %}
     </div>
 
@@ -156,7 +163,7 @@
         if (!w || w.closed || typeof w.closed === 'undefined') {
             const bar = document.createElement('div');
             bar.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#25D366;color:#fff;padding:14px 22px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:9999;font-weight:600;cursor:pointer;';
-            bar.textContent = '📲 Click to open WhatsApp';
+            bar.textContent = 'WhatsApp';
             bar.onclick = () => window.open(url, '_blank');
             document.body.appendChild(bar);
         }

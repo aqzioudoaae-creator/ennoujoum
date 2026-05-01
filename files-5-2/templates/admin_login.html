@@ -1,35 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Login - ennojoum{% endblock %}
+{% block title %}Connexion Manager — Ennojoum{% endblock %}
 
 {% block content %}
 <section class="login-page">
     <div class="login-card fade-in">
-        <div class="login-icon">👑</div>
-        <h2>Manager Login</h2>
-        <p class="muted">Sign in to view statistics and manage employees</p>
+        <h2 data-i18n="login.admin.title">Connexion Manager</h2>
+        <p class="muted" data-i18n="login.admin.subtitle">Connectez-vous pour consulter les statistiques et gérer les employés</p>
 
         <form method="POST" action="{{ url_for('admin_login') }}" class="form">
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username" data-i18n="login.field.username">Nom d'utilisateur</label>
                 <input type="text" id="username" name="username"
                        placeholder="admin" required autofocus>
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password" data-i18n="login.field.password">Mot de passe</label>
                 <input type="password" id="password" name="password"
                        placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-full">Login</button>
+            <button type="submit" class="btn btn-primary btn-full" data-i18n="login.btn.login">Connexion</button>
         </form>
 
         <div class="hint">
-            <small>Default credentials: <strong>admin / admin123</strong></small>
+            <small><span data-i18n="login.hint">Identifiants par défaut :</span> <strong>admin / admin123</strong></small>
         </div>
 
-        <a href="{{ url_for('home') }}" class="back-link">← Back to home</a>
+        <a href="{{ url_for('home') }}" class="back-link" data-i18n="login.back">← Retour à l'accueil</a>
     </div>
 </section>
 {% endblock %}

@@ -1,27 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}Client - Track Your Car{% endblock %}
+{% block title %}Client — Suivez votre voiture{% endblock %}
 
 {% block content %}
 <section class="login-page">
     <div class="login-card fade-in">
-        <div class="login-icon">🧍</div>
-        <h2>Track Your Car</h2>
-        <p class="muted">Enter the unique code you received on WhatsApp</p>
+        <h2 data-i18n="login.client.title">Suivez votre voiture</h2>
+        <p class="muted" data-i18n="login.client.subtitle">Entrez le code unique reçu sur WhatsApp</p>
 
         <form method="POST" action="{{ url_for('client_login') }}" class="form">
             <div class="form-group">
-                <label for="code">Tracking Code</label>
+                <label for="code" data-i18n="login.field.code">Code de suivi</label>
                 <input type="text" id="code" name="code"
-                       placeholder="e.g. 360"
+                       placeholder="360"
                        maxlength="3" required autofocus
                        style="text-align:center; font-size:1.5rem; letter-spacing:6px; font-weight:700;">
             </div>
 
-            <button type="submit" class="btn btn-primary btn-full">Track →</button>
+            <button type="submit" class="btn btn-primary btn-full" data-i18n="login.btn.track">Suivre</button>
         </form>
 
-        <a href="{{ url_for('home') }}" class="back-link">← Back to home</a>
+        <a href="{{ url_for('home') }}" class="back-link" data-i18n="login.back">← Retour à l'accueil</a>
     </div>
 </section>
 {% endblock %}

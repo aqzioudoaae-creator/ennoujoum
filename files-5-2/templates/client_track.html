@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Tracking #{{ car.code }} - ennojoum{% endblock %}
+{% block title %}Suivi #{{ car.code }} — Ennojoum{% endblock %}
 
 {% block content %}
 <section class="track-page">
@@ -8,13 +8,16 @@
 
         <div class="track-header">
             <div>
-                <h2>Tracking your car</h2>
-                <p class="muted">Code <strong class="code-badge">{{ car.code }}</strong></p>
+                <h2 data-i18n="track.title">Suivi de votre voiture</h2>
+                <p class="muted">
+                    <span data-i18n="track.code">Code</span>
+                    <strong class="code-badge">{{ car.code }}</strong>
+                </p>
             </div>
             <div class="car-info-mini">
-                <div><span>🚗</span> {{ car.car_type }}</div>
-                <div><span>🧽</span> {{ car.wash_type }}</div>
-                <div><span>💰</span> {{ car.price }} DH</div>
+                <div><span class="label" data-i18n="track.label.car">Voiture :</span> {{ car.car_type }}</div>
+                <div><span class="label" data-i18n="track.label.wash">Lavage :</span> {{ car.wash_type }}</div>
+                <div><span class="label" data-i18n="track.label.price">Prix :</span> {{ car.price }} DH</div>
             </div>
         </div>
 
@@ -23,8 +26,8 @@
             <div class="step
                 {% if car.status in ['Started','In Progress','Finished'] %}done{% endif %}">
                 <div class="dot">1</div>
-                <div class="step-label">Started</div>
-                <div class="step-desc">Car has been registered</div>
+                <div class="step-label" data-i18n="track.step1">Commencé</div>
+                <div class="step-desc" data-i18n="track.step1.desc">La voiture a été enregistrée</div>
             </div>
 
             <div class="bar
@@ -34,8 +37,8 @@
                 {% if car.status in ['In Progress','Finished'] %}done{% endif %}
                 {% if car.status == 'In Progress' %}active{% endif %}">
                 <div class="dot">2</div>
-                <div class="step-label">In Progress</div>
-                <div class="step-desc">Wash in progress</div>
+                <div class="step-label" data-i18n="track.step2">En cours</div>
+                <div class="step-desc" data-i18n="track.step2.desc">Lavage en cours</div>
             </div>
 
             <div class="bar
@@ -44,8 +47,8 @@
             <div class="step
                 {% if car.status == 'Finished' %}done active{% endif %}">
                 <div class="dot">3</div>
-                <div class="step-label">Finished</div>
-                <div class="step-desc">Ready for pickup</div>
+                <div class="step-label" data-i18n="track.step3">Terminé</div>
+                <div class="step-desc" data-i18n="track.step3.desc">Prête à être récupérée</div>
             </div>
         </div>
 
@@ -56,19 +59,19 @@
             {% else %}banner-green{% endif %}">
 
             {% if car.status == 'Started' %}
-                ⏳ Your car is registered. Wash will start soon.
+                <span data-i18n="track.banner.started">Votre voiture est enregistrée. Le lavage va bientôt commencer.</span>
             {% elif car.status == 'In Progress' %}
-                🚿 Your car is being washed right now!
+                <span data-i18n="track.banner.progress">Votre voiture est en cours de lavage.</span>
             {% else %}
-                ✅ Your car is ready! Please come pick it up.
+                <span data-i18n="track.banner.finished">Votre voiture est prête. Vous pouvez venir la récupérer.</span>
             {% endif %}
         </div>
 
-        <p class="muted small auto-refresh-note">
-            🔄 This page updates automatically every 10 seconds.
+        <p class="muted small auto-refresh-note" data-i18n="track.refresh">
+            Cette page se met à jour automatiquement toutes les 10 secondes.
         </p>
 
-        <a href="{{ url_for('client_login') }}" class="back-link">← Track another car</a>
+        <a href="{{ url_for('client_login') }}" class="back-link" data-i18n="track.back">← Suivre une autre voiture</a>
     </div>
 </section>
 {% endblock %}

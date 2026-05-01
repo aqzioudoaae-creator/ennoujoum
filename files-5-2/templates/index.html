@@ -1,40 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}ennojoum - Welcome{% endblock %}
+{% block title %}Ennojoum — Bienvenue{% endblock %}
 
 {% block content %}
 <section class="hero">
     <div class="hero-content fade-in">
-        <h1 class="hero-title">Welcome to <span class="yellow">ennojoum</span></h1>
-        <p class="hero-subtitle">
-            Smart Car Wash Management — No more waiting in line.<br>
-            Get notified on WhatsApp the moment your car is ready. 🚿
+        <h1 class="hero-title">
+            <span data-i18n="home.welcome">Bienvenue chez</span>
+            <span class="yellow">Ennojoum</span>
+        </h1>
+        <p class="hero-subtitle" data-i18n="home.subtitle">
+            Gestion intelligente du lavage auto. Plus d'attente en file. Recevez une notification WhatsApp dès que votre voiture est prête.
         </p>
 
         <div class="role-cards">
 
             <!-- Employee card -->
             <a href="{{ url_for('employee_login') }}" class="role-card pop-in">
-                <div class="role-icon">👨‍🔧</div>
-                <h3>Employee</h3>
-                <p>Register cars and update wash status</p>
-                <span class="role-btn">Login</span>
+                <h3 data-i18n="home.role.employee">Employé</h3>
+                <p data-i18n="home.role.employee.desc">Enregistrer les voitures et mettre à jour leur statut</p>
+                <span class="role-btn" data-i18n="home.btn.login">Se connecter</span>
             </a>
 
             <!-- Client card -->
             <a href="{{ url_for('client_login') }}" class="role-card pop-in" style="animation-delay:.15s">
-                <div class="role-icon">🧍</div>
-                <h3>Client</h3>
-                <p>Track your car using your unique code</p>
-                <span class="role-btn">Track</span>
+                <h3 data-i18n="home.role.client">Client</h3>
+                <p data-i18n="home.role.client.desc">Suivez votre voiture grâce à votre code unique</p>
+                <span class="role-btn" data-i18n="home.btn.track">Suivre</span>
             </a>
 
             <!-- Admin card -->
             <a href="{{ url_for('admin_login') }}" class="role-card pop-in" style="animation-delay:.3s">
-                <div class="role-icon">👑</div>
-                <h3>Manager</h3>
-                <p>View revenue and manage employees</p>
-                <span class="role-btn">Login</span>
+                <h3 data-i18n="home.role.manager">Manager</h3>
+                <p data-i18n="home.role.manager.desc">Consulter les revenus et gérer les employés</p>
+                <span class="role-btn" data-i18n="home.btn.login">Se connecter</span>
             </a>
 
         </div>
