@@ -41,6 +41,10 @@ PRICES = {
 # Each message: {phone, message, time, code}
 WHATSAPP_LOG = []
 
+# Initialize the database at import time so it works under gunicorn too
+# (gunicorn imports this module but does NOT execute the __main__ block).
+init_db()
+
 
 # -------------------------------------------------------------
 # Helper Functions
