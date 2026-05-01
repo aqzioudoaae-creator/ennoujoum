@@ -1,6 +1,6 @@
 """
 =============================================================
- ennojoum - Car Wash Management System
+ MNOJO - Car Wash Management System
  Main Flask Application
 =============================================================
  This application manages a car wash business with three roles:
@@ -28,7 +28,7 @@ from database import init_db, get_db_connection
 # Flask App Configuration
 # -------------------------------------------------------------
 app = Flask(__name__)
-app.secret_key = "ennojoum_super_secret_key_2025"   # used for sessions / flash messages
+app.secret_key = "mnojo_super_secret_key_2025"   # used for sessions / flash messages
 
 # Pricing rules (DH = Moroccan Dirham)
 PRICES = {
@@ -84,6 +84,37 @@ def send_whatsapp(phone, message, code=None):
     }
     WHATSAPP_LOG.append(entry)
     return entry
+
+
+# -------------------------------------------------------------
+# WhatsApp messages (FR / AR)
+# -------------------------------------------------------------
+WA_MESSAGES = {
+    "fr": {
+        "registered":  "Bonjour, votre voiture a bien été enregistrée. Votre code de suivi est : {code}. Vous pouvez suivre l'avancement du lavage sur notre site.",
+        "ready":       "Bonjour, votre voiture est prête. Vous pouvez venir la récupérer. Merci.",
+        "reminder":    "Bonjour, petit rappel : votre voiture (code {code}) vous attend toujours au lavage. Merci de venir la récupérer.",
+        "tracking":    "Votre code de suivi est : {code}",
+    },
+    "ar": {
+        "registered":  "مرحباً، تم تسجيل سيارتكم بنجاح. رمز التتبع الخاص بكم هو : {code}. يمكنكم متابعة تقدم الغسيل عبر موقعنا.",
+        "ready":       "مرحباً، سيارتكم جاهزة. يمكنكم القدوم لاستلامها. شكراً لكم.",
+        "reminder":    "مرحباً، تذكير بسيط : سيارتكم (الرمز {code}) لا تزال في انتظاركم بمحطة الغسيل. نرجو القدوم لاستلامها.",
+        "tracking":    "رمز التتبع الخاص بكم هو : {code}",
+    }
+}
+
+def get_lang():
+    """Read the visitor's preferred language from the cookie set by main.js.
+    Defaults to 'fr' if missing or invalid."""
+    lang = request.cookies.get("mnojo_lang", "fr")
+    return lang if lang in ("fr", "ar") else "fr"
+
+def wa_text(key, **kwargs):
+    """Return a WhatsApp message in the visitor's current language."""
+    lang = get_lang()
+    template = WA_MESSAGES.get(lang, WA_MESSAGES["fr"]).get(key, "")
+    return template.format(**kwargs)
 
 
 def login_required(role):
@@ -162,6 +193,7 @@ def employee_dashboard():
         username=session.get("username"),
         pending_whatsapp=pending_whatsapp,
         build_whatsapp_link=build_whatsapp_link,
+        wa_text=wa_text,
     )
 
 
@@ -201,7 +233,7 @@ def register_car():
     # -------- create real WhatsApp link --------
     wa_entry = send_whatsapp(
         phone,
-        "Your car has been registered. Track it using this code: " + code,
+        wa_text("registered", code=code),
         code=code
     )
     flash(wa_entry["link"], "whatsapp")
@@ -234,7 +266,7 @@ def update_status(car_id):
     if new_status == "Finished":
         wa_entry = send_whatsapp(
             car["phone"],
-            "Your car is ready. Please come pick it up.",
+            wa_text("ready"),
             code=car["code"]
         )
         flash(wa_entry["link"], "whatsapp")
@@ -256,7 +288,7 @@ def send_reminder(car_id):
 
     wa_entry = send_whatsapp(
         car["phone"],
-        "Reminder: Your car (code " + car["code"] + ") is still waiting for pickup.",
+        wa_text("reminder", code=car["code"]),
         code=car["code"]
     )
     flash(wa_entry["link"], "whatsapp")
@@ -437,8 +469,6 @@ def api_status(code):
 # =============================================================
 #                 APP ENTRY POINT
 # =============================================================
-init_db()
-
 if __name__ == "__main__":
     init_db()
     # NOTE: debug=False to avoid Flask reloader breaking stdout on Windows

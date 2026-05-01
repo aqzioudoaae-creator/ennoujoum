@@ -1,8 +1,8 @@
 """
 =============================================================
- database.py - SQLite setup for ennojoum
+ database.py - SQLite setup for Mnojo
 =============================================================
- - Creates the database file (ennojoum.db) if it doesn't exist
+ - Creates the database file (mnojo.db) if it doesn't exist
  - Creates tables: cars, employees
  - Inserts default employee (admin1 / 1234)
 =============================================================
@@ -11,7 +11,7 @@
 import sqlite3
 import os
 
-DB_NAME = "ennojoum.db"
+DB_NAME = "mnojo.db"
 
 
 def get_db_connection():
@@ -70,7 +70,7 @@ def init_db():
     conn.close()
 
     if first_time:
-        print("[DB] Database created successfully (ennojoum.db)")
+        print("[DB] Database created successfully (mnojo.db)")
     else:
         print("[DB] Database ready.")
 

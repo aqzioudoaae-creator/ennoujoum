@@ -260,6 +260,9 @@ function getLang() {
 function setLang(lang) {
     if (lang !== 'fr' && lang !== 'ar') lang = 'fr';
     localStorage.setItem('mnojo_lang', lang);
+    // Set a cookie too so the Python backend can read the language
+    // (used for translating WhatsApp messages server-side)
+    document.cookie = 'mnojo_lang=' + lang + '; path=/; max-age=31536000; SameSite=Lax';
     applyLang(lang);
 }
 
@@ -341,6 +344,8 @@ function toggleLang() {
     const lang = getLang();
     document.documentElement.setAttribute('lang', lang);
     document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    // Sync cookie with localStorage so the backend gets it on every request
+    document.cookie = 'mnojo_lang=' + lang + '; path=/; max-age=31536000; SameSite=Lax';
 })();
 
 document.addEventListener('DOMContentLoaded', () => {

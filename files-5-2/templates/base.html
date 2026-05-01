@@ -22,6 +22,7 @@
                 document.documentElement.setAttribute('data-theme', t);
                 document.documentElement.setAttribute('lang', l);
                 document.documentElement.setAttribute('dir', l === 'ar' ? 'rtl' : 'ltr');
+                document.cookie = 'mnojo_lang=' + l + '; path=/; max-age=31536000; SameSite=Lax';
             } catch (e) {}
         })();
     </script>
@@ -45,7 +46,6 @@
                 <a href="{{ url_for('logout') }}" class="btn-logout" data-i18n="nav.logout">Déconnexion</a>
             {% else %}
                 <a href="{{ url_for('home') }}" data-i18n="nav.home">Accueil</a>
-                <a href="{{ url_for('client_login') }}" data-i18n="nav.track">Suivre ma voiture</a>
             {% endif %}
 
             <div class="nav-controls">
