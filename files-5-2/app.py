@@ -441,9 +441,6 @@ init_db()
 
 if __name__ == "__main__":
     init_db()
-    app.run(...)
-if __name__ == "__main__":
-    init_db()
     # NOTE: debug=False to avoid Flask reloader breaking stdout on Windows
     # (which causes OSError [Errno 22] inside print()).
     app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False)
