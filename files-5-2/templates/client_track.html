@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Tracking #{{ car.code }} - Mnojo{% endblock %}
+
+{% block content %}
+<section class="track-page">
+    <div class="track-card fade-in">
+
+        <div class="track-header">
+            <div>
+                <h2>Tracking your car</h2>
+                <p class="muted">Code <strong class="code-badge">{{ car.code }}</strong></p>
+            </div>
+            <div class="car-info-mini">
+                <div><span>🚗</span> {{ car.car_type }}</div>
+                <div><span>🧽</span> {{ car.wash_type }}</div>
+                <div><span>💰</span> {{ car.price }} DH</div>
+            </div>
+        </div>
+
+        <!-- ======= Timeline ======= -->
+        <div class="timeline" id="timeline" data-status="{{ car.status }}">
+            <div class="step
+                {% if car.status in ['Started','In Progress','Finished'] %}done{% endif %}">
+                <div class="dot">1</div>
+                <div class="step-label">Started</div>
+                <div class="step-desc">Car has been registered</div>
+            </div>
+
+            <div class="bar
+                {% if car.status in ['In Progress','Finished'] %}filled{% endif %}"></div>
+
+            <div class="step
+                {% if car.status in ['In Progress','Finished'] %}done{% endif %}
+                {% if car.status == 'In Progress' %}active{% endif %}">
+                <div class="dot">2</div>
+                <div class="step-label">In Progress</div>
+                <div class="step-desc">Wash in progress</div>
+            </div>
+
+            <div class="bar
+                {% if car.status == 'Finished' %}filled{% endif %}"></div>
+
+            <div class="step
+                {% if car.status == 'Finished' %}done active{% endif %}">
+                <div class="dot">3</div>
+                <div class="step-label">Finished</div>
+                <div class="step-desc">Ready for pickup</div>
+            </div>
+        </div>
+
+        <!-- ======= Status Banner ======= -->
+        <div id="status-banner" class="status-banner
+            {% if car.status == 'Started' %}banner-gray
+            {% elif car.status == 'In Progress' %}banner-yellow
+            {% else %}banner-green{% endif %}">
+
+            {% if car.status == 'Started' %}
+                ⏳ Your car is registered. Wash will start soon.
+            {% elif car.status == 'In Progress' %}
+                🚿 Your car is being washed right now!
+            {% else %}
+                ✅ Your car is ready! Please come pick it up.
+            {% endif %}
+        </div>
+
+        <p class="muted small auto-refresh-note">
+            🔄 This page updates automatically every 10 seconds.
+        </p>
+
+        <a href="{{ url_for('client_login') }}" class="back-link">← Track another car</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-refresh the status every 10 seconds without reloading the whole page
+    const code = "{{ car.code }}";
+
+    async function refreshStatus() {
+        try {
+            const res  = await fetch(`/api/status/${code}`);
+            if (!res.ok) return;
+            const data = await res.json();
+            const current = document.getElementById('timeline').dataset.status;
+            if (data.status !== current) {
+                // status changed -> reload page so timeline updates fully
+                location.reload();
+            }
+        } catch (err) {
+            console.warn('refresh failed', err);
+        }
+    }
+
+    setInterval(refreshStatus, 10000);
+</script>
+{% endblock %}

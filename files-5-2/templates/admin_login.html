@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Mnojo{% endblock %}
+
+{% block content %}
+<section class="login-page">
+    <div class="login-card fade-in">
+        <div class="login-icon">👑</div>
+        <h2>Manager Login</h2>
+        <p class="muted">Sign in to view statistics and manage employees</p>
+
+        <form method="POST" action="{{ url_for('admin_login') }}" class="form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username"
+                       placeholder="admin" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Login</button>
+        </form>
+
+        <div class="hint">
+            <small>Default credentials: <strong>admin / admin123</strong></small>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="back-link">← Back to home</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Mnojo - Welcome{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content fade-in">
+        <h1 class="hero-title">Welcome to <span class="yellow">Mnojo</span></h1>
+        <p class="hero-subtitle">
+            Smart Car Wash Management — No more waiting in line.<br>
+            Get notified on WhatsApp the moment your car is ready. 🚿
+        </p>
+
+        <div class="role-cards">
+
+            <!-- Employee card -->
+            <a href="{{ url_for('employee_login') }}" class="role-card pop-in">
+                <div class="role-icon">👨‍🔧</div>
+                <h3>Employee</h3>
+                <p>Register cars and update wash status</p>
+                <span class="role-btn">Login</span>
+            </a>
+
+            <!-- Client card -->
+            <a href="{{ url_for('client_login') }}" class="role-card pop-in" style="animation-delay:.15s">
+                <div class="role-icon">🧍</div>
+                <h3>Client</h3>
+                <p>Track your car using your unique code</p>
+                <span class="role-btn">Track</span>
+            </a>
+
+            <!-- Admin card -->
+            <a href="{{ url_for('admin_login') }}" class="role-card pop-in" style="animation-delay:.3s">
+                <div class="role-icon">👑</div>
+                <h3>Manager</h3>
+                <p>View revenue and manage employees</p>
+                <span class="role-btn">Login</span>
+            </a>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

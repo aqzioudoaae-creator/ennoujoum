@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Mnojo{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+
+    <div class="dashboard-header fade-in">
+        <h2>Manager Dashboard</h2>
+        <p class="muted">Overview of revenue, operations and staff</p>
+    </div>
+
+    <!-- ============ STATS CARDS ============ -->
+    <div class="stats-grid">
+        <div class="stat-card slide-up">
+            <div class="stat-icon">🚗</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.total_cars }}</div>
+                <div class="stat-label">Total Cars</div>
+            </div>
+        </div>
+
+        <div class="stat-card slide-up" style="animation-delay:.05s">
+            <div class="stat-icon">💵</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.daily_revenue }} DH</div>
+                <div class="stat-label">Today's Revenue</div>
+            </div>
+        </div>
+
+        <div class="stat-card slide-up" style="animation-delay:.1s">
+            <div class="stat-icon">📅</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.weekly_revenue }} DH</div>
+                <div class="stat-label">Weekly Revenue</div>
+            </div>
+        </div>
+
+        <div class="stat-card slide-up" style="animation-delay:.15s">
+            <div class="stat-icon">📈</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.monthly_revenue }} DH</div>
+                <div class="stat-label">Monthly Revenue</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ STATUS BREAKDOWN ============ -->
+    <div class="card slide-up" style="animation-delay:.2s">
+        <h3 class="card-title">📊 Status Breakdown</h3>
+        <div class="status-summary">
+            <div class="status-pill status-started">
+                Started: <strong>{{ stats.started }}</strong>
+            </div>
+            <div class="status-pill status-progress">
+                In Progress: <strong>{{ stats.in_progress }}</strong>
+            </div>
+            <div class="status-pill status-finished">
+                Finished: <strong>{{ stats.finished }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ EMPLOYEES MANAGEMENT ============ -->
+    <div class="two-col">
+
+        <div class="card slide-up">
+            <h3 class="card-title">👨‍🔧 Employees ({{ employees|length }})</h3>
+
+            <table class="data-table small-table">
+                <thead>
+                    <tr><th>ID</th><th>Username</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    {% for e in employees %}
+                    <tr>
+                        <td>{{ e.id }}</td>
+                        <td>{{ e.username }}</td>
+                        <td>
+                            {% if e.username != 'admin1' %}
+                            <form method="POST"
+                                  action="{{ url_for('delete_employee', emp_id=e.id) }}"
+                                  onsubmit="return confirm('Delete employee {{ e.username }}?');"
+                                  class="inline-form">
+                                <button type="submit" class="btn-mini danger">🗑</button>
+                            </form>
+                            {% else %}
+                                <em class="muted small">default</em>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card slide-up" style="animation-delay:.05s">
+            <h3 class="card-title">➕ Create New Employee</h3>
+            <form method="POST" action="{{ url_for('create_employee') }}" class="form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="e.g. youssef" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="text" name="password" placeholder="••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Create Employee</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ ALL OPERATIONS HISTORY ============ -->
+    <div class="card slide-up" style="animation-delay:.1s">
+        <h3 class="card-title">📜 All Operations History</h3>
+
+        {% if cars %}
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Code</th>
+                        <th>Car</th>
+                        <th>Phone</th>
+                        <th>Wash</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for c in cars %}
+                    <tr>
+                        <td>{{ c.id }}</td>
+                        <td><strong class="code-badge">{{ c.code }}</strong></td>
+                        <td>{{ c.car_type }}</td>
+                        <td>{{ c.phone }}</td>
+                        <td>{{ c.wash_type }}</td>
+                        <td>{{ c.price }} DH</td>
+                        <td>
+                            <span class="status-badge
+                                {% if c.status == 'Started' %}status-started
+                                {% elif c.status == 'In Progress' %}status-progress
+                                {% else %}status-finished{% endif %}">
+                                {{ c.status }}
+                            </span>
+                        </td>
+                        <td><small>{{ c.date }}</small></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="empty-state">No operations yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- ============ WHATSAPP LOG ============ -->
+    <div class="card slide-up" style="animation-delay:.15s">
+        <h3 class="card-title">📲 Recent WhatsApp Notifications</h3>
+        {% if whatsapp_log %}
+            <ul class="msg-list">
+                {% for m in whatsapp_log %}
+                    <li>
+                        <span class="msg-time">{{ m.time }}</span>
+                        <span class="msg-phone">→ {{ m.phone }}</span>
+                        <span class="msg-text">{{ m.message }}</span>
+                        {% if m.link %}
+                            <a href="{{ m.link }}" target="_blank" rel="noopener"
+                               class="btn-mini" style="margin-left:8px;"
+                               title="Open in WhatsApp">📲 Open</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-state">No messages sent yet.</p>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}

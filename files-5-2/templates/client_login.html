@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Client - Track Your Car{% endblock %}
+
+{% block content %}
+<section class="login-page">
+    <div class="login-card fade-in">
+        <div class="login-icon">🧍</div>
+        <h2>Track Your Car</h2>
+        <p class="muted">Enter the unique code you received on WhatsApp</p>
+
+        <form method="POST" action="{{ url_for('client_login') }}" class="form">
+            <div class="form-group">
+                <label for="code">Tracking Code</label>
+                <input type="text" id="code" name="code"
+                       placeholder="e.g. 360"
+                       maxlength="3" required autofocus
+                       style="text-align:center; font-size:1.5rem; letter-spacing:6px; font-weight:700;">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Track →</button>
+        </form>
+
+        <a href="{{ url_for('home') }}" class="back-link">← Back to home</a>
+    </div>
+</section>
+{% endblock %}
