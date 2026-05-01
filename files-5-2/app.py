@@ -437,6 +437,11 @@ def api_status(code):
 # =============================================================
 #                 APP ENTRY POINT
 # =============================================================
+init_db()
+
+if __name__ == "__main__":
+    init_db()
+    app.run(...)
 if __name__ == "__main__":
     init_db()
     # NOTE: debug=False to avoid Flask reloader breaking stdout on Windows
