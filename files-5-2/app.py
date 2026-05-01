@@ -1,6 +1,6 @@
 """
 =============================================================
- MNOJO - Car Wash Management System
+ ennojoum - Car Wash Management System
  Main Flask Application
 =============================================================
  This application manages a car wash business with three roles:
@@ -28,7 +28,7 @@ from database import init_db, get_db_connection
 # Flask App Configuration
 # -------------------------------------------------------------
 app = Flask(__name__)
-app.secret_key = "mnojo_super_secret_key_2025"   # used for sessions / flash messages
+app.secret_key = "ennojoum_super_secret_key_2025"   # used for sessions / flash messages
 
 # Pricing rules (DH = Moroccan Dirham)
 PRICES = {

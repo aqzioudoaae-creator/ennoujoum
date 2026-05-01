@@ -1,5 +1,5 @@
 /* =========================================================
-   MNOJO - Main JavaScript
+   ennojoum - Main JavaScript
    ========================================================= */
 
 // Auto-dismiss flash messages after 4 seconds
