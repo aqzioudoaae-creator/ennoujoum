@@ -57,6 +57,52 @@
         </div>
     </div>
 
+    <!-- ============ MANAGER : ADD A NEW CAR ============ -->
+    <div class="card slide-up" style="animation-delay:.22s">
+        <h3 class="card-title" data-i18n="emp.register.title">Enregistrer une nouvelle voiture</h3>
+
+        <form method="POST" action="{{ url_for('admin_register_car') }}" class="form grid-form">
+            <div class="form-group">
+                <label for="car_type" data-i18n="emp.field.car_type">Type de voiture</label>
+                <select id="car_type" name="car_type" required>
+                    <option value="" data-i18n="emp.opt.select">-- Sélectionner --</option>
+                    <option value="Small" data-i18n="emp.opt.small">Petite</option>
+                    <option value="Large" data-i18n="emp.opt.large">Grande</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone" data-i18n="emp.field.phone">Numéro de téléphone</label>
+                <input type="text" id="phone" name="phone"
+                       placeholder="+212 6 12 34 56 78" required>
+            </div>
+
+            <div class="form-group">
+                <label for="wash_type" data-i18n="emp.field.wash_type">Type de lavage</label>
+                <select id="wash_type" name="wash_type" required
+                        onchange="updateAdminPrice(this.value)">
+                    <option value="" data-i18n="emp.opt.select">-- Sélectionner --</option>
+                    {% for w, p in prices.items() %}
+                        <option value="{{ w }}" data-price="{{ p }}">
+                            {{ w }} — {{ p }} DH
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label data-i18n="emp.field.price">Prix</label>
+                <div id="price-display" class="price-box">0 DH</div>
+            </div>
+
+            <div class="form-group full-width">
+                <button type="submit" class="btn btn-primary btn-full" data-i18n="emp.btn.register">
+                    Enregistrer et envoyer WhatsApp
+                </button>
+            </div>
+        </form>
+    </div>
+
     <!-- ============ EMPLOYEES MANAGEMENT ============ -->
     <div class="two-col">
 
@@ -80,6 +126,10 @@
                         <td>{{ e.id }}</td>
                         <td>{{ e.username }}</td>
                         <td>
+                            <button type="button"
+                                    class="btn-mini"
+                                    onclick="toggleEmpEdit({{ e.id }})"
+                                    data-i18n="admin.edit">Modifier</button>
                             {% if e.username != 'admin1' %}
                             <form method="POST"
                                   action="{{ url_for('delete_employee', emp_id=e.id) }}"
@@ -92,6 +142,32 @@
                             {% else %}
                                 <em class="muted small" data-i18n="admin.default">par défaut</em>
                             {% endif %}
+                        </td>
+                    </tr>
+                    <!-- Hidden inline edit form -->
+                    <tr id="emp-edit-{{ e.id }}" style="display:none; background: var(--surface-alt);">
+                        <td colspan="3">
+                            <form method="POST"
+                                  action="{{ url_for('admin_update_employee', emp_id=e.id) }}"
+                                  class="form grid-form" style="margin-top:6px;">
+                                <div class="form-group">
+                                    <label data-i18n="admin.create.username">Nom d'utilisateur</label>
+                                    <input type="text" name="username" value="{{ e.username }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label data-i18n="admin.create.password">Mot de passe</label>
+                                    <input type="text" name="password" placeholder="••••" required>
+                                </div>
+                                <div class="form-group full-width">
+                                    <button type="submit"
+                                            class="btn btn-primary"
+                                            data-i18n="admin.save">Enregistrer</button>
+                                    <button type="button"
+                                            class="btn-mini"
+                                            onclick="toggleEmpEdit({{ e.id }})"
+                                            data-i18n="admin.cancel">Annuler</button>
+                                </div>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
@@ -117,7 +193,7 @@
         </div>
     </div>
 
-    <!-- ============ ALL OPERATIONS HISTORY ============ -->
+    <!-- ============ ALL CARS - FULL CRUD ============ -->
     <div class="card slide-up" style="animation-delay:.1s">
         <h3 class="card-title" data-i18n="admin.history.title">Historique de toutes les opérations</h3>
 
@@ -134,6 +210,7 @@
                         <th data-i18n="th.price">Prix</th>
                         <th data-i18n="th.status">Statut</th>
                         <th data-i18n="th.date">Date</th>
+                        <th data-i18n="th.actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -155,6 +232,95 @@
                             </span>
                         </td>
                         <td><small>{{ c.date }}</small></td>
+                        <td class="actions">
+                            <button type="button"
+                                    class="btn-mini"
+                                    onclick="toggleCarEdit({{ c.id }})"
+                                    data-i18n="admin.edit">Modifier</button>
+
+                            <a class="btn-mini"
+                               target="_blank" rel="noopener"
+                               href="{{ build_whatsapp_link(c.phone, wa_text('tracking', code=c.code)) }}">
+                                WhatsApp
+                            </a>
+
+                            {% if c.status == 'Finished' %}
+                            <form method="POST"
+                                  action="{{ url_for('admin_send_reminder', car_id=c.id) }}"
+                                  class="inline-form">
+                                <button type="submit"
+                                        class="btn-mini"
+                                        data-i18n-title="emp.send.reminder"
+                                        title="Envoyer un rappel">
+                                    Rappel
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            <form method="POST"
+                                  action="{{ url_for('admin_delete_car', car_id=c.id) }}"
+                                  onsubmit="return confirm('Supprimer la voiture #{{ c.code }} ?');"
+                                  class="inline-form">
+                                <button type="submit"
+                                        class="btn-mini danger"
+                                        data-i18n="admin.delete">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Hidden inline edit row -->
+                    <tr id="car-edit-{{ c.id }}" style="display:none; background: var(--surface-alt);">
+                        <td colspan="9">
+                            <form method="POST"
+                                  action="{{ url_for('admin_update_car', car_id=c.id) }}"
+                                  class="form grid-form" style="margin-top:6px;">
+
+                                <div class="form-group">
+                                    <label data-i18n="emp.field.car_type">Type de voiture</label>
+                                    <select name="car_type" required>
+                                        <option value="Small" {% if c.car_type=='Small' %}selected{% endif %}
+                                                data-i18n="emp.opt.small">Petite</option>
+                                        <option value="Large" {% if c.car_type=='Large' %}selected{% endif %}
+                                                data-i18n="emp.opt.large">Grande</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label data-i18n="emp.field.phone">Téléphone</label>
+                                    <input type="text" name="phone" value="{{ c.phone }}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label data-i18n="emp.field.wash_type">Type de lavage</label>
+                                    <select name="wash_type" required>
+                                        {% for w, p in prices.items() %}
+                                            <option value="{{ w }}" {% if c.wash_type==w %}selected{% endif %}>
+                                                {{ w }} — {{ p }} DH
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label data-i18n="th.status">Statut</label>
+                                    <select name="status" required>
+                                        <option value="Started"     data-i18n-status="Started"     {% if c.status=='Started'     %}selected{% endif %}>Started</option>
+                                        <option value="In Progress" data-i18n-status="In Progress" {% if c.status=='In Progress' %}selected{% endif %}>In Progress</option>
+                                        <option value="Finished"    data-i18n-status="Finished"    {% if c.status=='Finished'    %}selected{% endif %}>Finished</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <button type="submit"
+                                            class="btn btn-primary"
+                                            data-i18n="admin.save">Enregistrer</button>
+                                    <button type="button"
+                                            class="btn-mini"
+                                            onclick="toggleCarEdit({{ c.id }})"
+                                            data-i18n="admin.cancel">Annuler</button>
+                                </div>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -189,4 +355,46 @@
     </div>
 
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    /* Toggle inline edit row visibility */
+    function toggleCarEdit(id) {
+        const row = document.getElementById('car-edit-' + id);
+        if (!row) return;
+        row.style.display = (row.style.display === 'none' || !row.style.display) ? 'table-row' : 'none';
+    }
+    function toggleEmpEdit(id) {
+        const row = document.getElementById('emp-edit-' + id);
+        if (!row) return;
+        row.style.display = (row.style.display === 'none' || !row.style.display) ? 'table-row' : 'none';
+    }
+
+    /* Live price preview when registering a car */
+    function updateAdminPrice(value) {
+        const select = document.getElementById('wash_type');
+        const opt    = select.options[select.selectedIndex];
+        const price  = opt.getAttribute('data-price') || 0;
+        const box    = document.getElementById('price-display');
+        box.textContent = price + ' DH';
+        box.classList.add('pulse');
+        setTimeout(() => box.classList.remove('pulse'), 400);
+    }
+
+    /* Auto-open the WhatsApp link after registering a car (same UX as employee dashboard) */
+    {% if pending_whatsapp %}
+    (function() {
+        const url = {{ pending_whatsapp | tojson }};
+        const w = window.open(url, '_blank');
+        if (!w || w.closed || typeof w.closed === 'undefined') {
+            const bar = document.createElement('div');
+            bar.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#25D366;color:#fff;padding:14px 22px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.25);z-index:9999;font-weight:600;cursor:pointer;';
+            bar.textContent = 'WhatsApp';
+            bar.onclick = () => window.open(url, '_blank');
+            document.body.appendChild(bar);
+        }
+    })();
+    {% endif %}
+</script>
 {% endblock %}

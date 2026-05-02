@@ -385,11 +385,19 @@ def admin_dashboard():
         "started":        sum(1 for c in cars if c["status"] == "Started"),
     }
 
+    # Pending whatsapp link to auto-open (if any flash from this admin)
+    wa_flashes = get_flashed_messages(category_filter=["whatsapp"])
+    pending_whatsapp = wa_flashes[-1] if wa_flashes else None
+
     return render_template(
         "admin_dashboard.html",
         cars=cars,
         employees=employees,
         stats=stats,
+        prices=PRICES,
+        pending_whatsapp=pending_whatsapp,
+        build_whatsapp_link=build_whatsapp_link,
+        wa_text=wa_text,
         whatsapp_log=list(reversed(WHATSAPP_LOG[-15:]))  # last 15 messages
     )
 
@@ -437,6 +445,188 @@ def delete_employee(emp_id):
     else:
         flash("Cannot delete this account.", "error")
     conn.close()
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/update_employee/<int:emp_id>", methods=["POST"])
+@login_required("admin")
+def admin_update_employee(emp_id):
+    """Admin updates an employee password (and optionally username)."""
+    new_username = request.form.get("username", "").strip()
+    new_password = request.form.get("password", "").strip()
+
+    if not new_password:
+        flash("Password cannot be empty.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    conn = get_db_connection()
+    emp = conn.execute("SELECT * FROM employees WHERE id = ?", (emp_id,)).fetchone()
+    if not emp:
+        conn.close()
+        flash("Employee not found.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    # Username change is allowed but must stay unique
+    if new_username and new_username != emp["username"]:
+        existing = conn.execute(
+            "SELECT id FROM employees WHERE username = ? AND id != ?",
+            (new_username, emp_id)
+        ).fetchone()
+        if existing:
+            conn.close()
+            flash("This username is already taken.", "error")
+            return redirect(url_for("admin_dashboard"))
+        conn.execute(
+            "UPDATE employees SET username = ?, password = ? WHERE id = ?",
+            (new_username, new_password, emp_id)
+        )
+    else:
+        conn.execute(
+            "UPDATE employees SET password = ? WHERE id = ?",
+            (new_password, emp_id)
+        )
+
+    conn.commit()
+    conn.close()
+    flash("Employee updated successfully.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+# =============================================================
+#         ADMIN — FULL CRUD ON CARS
+# =============================================================
+@app.route("/admin/register_car", methods=["POST"])
+@login_required("admin")
+def admin_register_car():
+    """Admin registers a new car (same logic as employee register_car)."""
+    car_type   = request.form.get("car_type")
+    phone      = request.form.get("phone", "").strip()
+    wash_type  = request.form.get("wash_type")
+
+    if not car_type or not phone or not wash_type:
+        flash("All fields are required.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if wash_type not in PRICES:
+        flash("Invalid wash type.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if not phone.replace("+", "").replace(" ", "").isdigit():
+        flash("Phone number must contain only digits.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    code  = generate_unique_code()
+    price = PRICES[wash_type]
+    date  = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    conn = get_db_connection()
+    conn.execute(
+        """INSERT INTO cars (code, car_type, phone, wash_type, price, status, date)
+           VALUES (?, ?, ?, ?, ?, ?, ?)""",
+        (code, car_type, phone, wash_type, price, "Started", date)
+    )
+    conn.commit()
+    conn.close()
+
+    wa_entry = send_whatsapp(
+        phone,
+        wa_text("registered", code=code),
+        code=code
+    )
+    flash(wa_entry["link"], "whatsapp")
+    flash("Car registered successfully! Tracking code: " + code, "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/update_car/<int:car_id>", methods=["POST"])
+@login_required("admin")
+def admin_update_car(car_id):
+    """Admin edits any field of a car (car_type, phone, wash_type, status).
+    Price is recomputed from the wash_type."""
+    car_type   = request.form.get("car_type", "").strip()
+    phone      = request.form.get("phone", "").strip()
+    wash_type  = request.form.get("wash_type", "").strip()
+    new_status = request.form.get("status", "").strip()
+
+    if not car_type or not phone or not wash_type or not new_status:
+        flash("All fields are required.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if wash_type not in PRICES:
+        flash("Invalid wash type.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if new_status not in ("Started", "In Progress", "Finished"):
+        flash("Invalid status.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if not phone.replace("+", "").replace(" ", "").isdigit():
+        flash("Phone number must contain only digits.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    price = PRICES[wash_type]
+
+    conn = get_db_connection()
+    car  = conn.execute("SELECT * FROM cars WHERE id = ?", (car_id,)).fetchone()
+    if not car:
+        conn.close()
+        flash("Car not found.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    old_status = car["status"]
+    conn.execute(
+        """UPDATE cars
+              SET car_type = ?, phone = ?, wash_type = ?, price = ?, status = ?
+            WHERE id = ?""",
+        (car_type, phone, wash_type, price, new_status, car_id)
+    )
+    conn.commit()
+    conn.close()
+
+    # If the status just became "Finished", trigger the pickup WhatsApp
+    if new_status == "Finished" and old_status != "Finished":
+        wa_entry = send_whatsapp(
+            phone,
+            wa_text("ready"),
+            code=car["code"]
+        )
+        flash(wa_entry["link"], "whatsapp")
+
+    flash("Car updated successfully.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/delete_car/<int:car_id>", methods=["POST"])
+@login_required("admin")
+def admin_delete_car(car_id):
+    """Admin deletes a car record."""
+    conn = get_db_connection()
+    car  = conn.execute("SELECT * FROM cars WHERE id = ?", (car_id,)).fetchone()
+    if not car:
+        conn.close()
+        flash("Car not found.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    conn.execute("DELETE FROM cars WHERE id = ?", (car_id,))
+    conn.commit()
+    conn.close()
+    flash(f"Car #{car['code']} deleted successfully.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/send_reminder/<int:car_id>", methods=["POST"])
+@login_required("admin")
+def admin_send_reminder(car_id):
+    """Admin sends a pickup-reminder WhatsApp to the client."""
+    conn = get_db_connection()
+    car = conn.execute("SELECT * FROM cars WHERE id = ?", (car_id,)).fetchone()
+    conn.close()
+    if not car:
+        flash("Car not found.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    wa_entry = send_whatsapp(
+        car["phone"],
+        wa_text("reminder", code=car["code"]),
+        code=car["code"]
+    )
+    flash(wa_entry["link"], "whatsapp")
+    flash("Reminder sent successfully.", "success")
     return redirect(url_for("admin_dashboard"))
 
 

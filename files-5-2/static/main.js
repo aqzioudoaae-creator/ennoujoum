@@ -106,6 +106,9 @@ const I18N = {
         "admin.whatsapp.open":      "Ouvrir",
         "admin.default":            "par défaut",
         "admin.delete":             "Supprimer",
+        "admin.edit":               "Modifier",
+        "admin.save":               "Enregistrer",
+        "admin.cancel":             "Annuler",
 
         "track.title":              "Suivi de votre voiture",
         "track.code":               "Code",
@@ -227,6 +230,9 @@ const I18N = {
         "admin.whatsapp.open":      "فتح",
         "admin.default":            "افتراضي",
         "admin.delete":             "حذف",
+        "admin.edit":               "تعديل",
+        "admin.save":               "حفظ",
+        "admin.cancel":             "إلغاء",
 
         "track.title":              "تتبع سيارتك",
         "track.code":               "الرمز",
