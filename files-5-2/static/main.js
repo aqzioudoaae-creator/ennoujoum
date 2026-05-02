@@ -110,6 +110,10 @@ const I18N = {
         "admin.save":               "Enregistrer",
         "admin.cancel":             "Annuler",
 
+        "search.cars":              "Rechercher une voiture...",
+        "search.employees":         "Rechercher un employé...",
+        "search.empty":             "Aucun résultat trouvé",
+
         "track.title":              "Suivi de votre voiture",
         "track.code":               "Code",
         "track.step1":              "Commencé",
@@ -234,6 +238,10 @@ const I18N = {
         "admin.save":               "حفظ",
         "admin.cancel":             "إلغاء",
 
+        "search.cars":              "ابحث عن سيارة...",
+        "search.employees":         "ابحث عن موظف...",
+        "search.empty":             "لا توجد نتائج",
+
         "track.title":              "تتبع سيارتك",
         "track.code":               "الرمز",
         "track.step1":              "بدأ",
@@ -342,6 +350,40 @@ function toggleTheme() {
 
 function toggleLang() {
     setLang(getLang() === 'fr' ? 'ar' : 'fr');
+}
+
+/* ---------- Search / Filter helper ----------
+   Filters rows of a table by matching a query against each row's
+   `data-search` attribute. Edit rows that follow a searched row are
+   hidden when its parent row is hidden (so an open edit form doesn't
+   stay visible after filtering). */
+function filterTable(inputId, tableId, emptyMsgId) {
+    const input  = document.getElementById(inputId);
+    const table  = document.getElementById(tableId);
+    if (!input || !table) return;
+    const query  = input.value.toLowerCase().trim();
+    const rows   = table.querySelectorAll('tbody tr');
+    let visible  = 0;
+
+    let lastRowVisible = true;
+    rows.forEach(row => {
+        // An edit row has no data-search but follows a searchable row.
+        if (row.classList.contains('searchable-row')) {
+            const haystack = (row.getAttribute('data-search') || '').toLowerCase();
+            const match    = !query || haystack.indexOf(query) !== -1;
+            row.style.display = match ? '' : 'none';
+            lastRowVisible = match;
+            if (match) visible++;
+        } else {
+            // Non-searchable row (typically an inline edit form).
+            // Only show it if its parent searchable row is visible AND
+            // it was already manually opened. If parent is hidden, hide it too.
+            if (!lastRowVisible) row.style.display = 'none';
+        }
+    });
+
+    const empty = emptyMsgId ? document.getElementById(emptyMsgId) : null;
+    if (empty) empty.style.display = (visible === 0 && query) ? 'inline-block' : 'none';
 }
 
 /* ---------- Apply on load (as early as possible) ---------- */

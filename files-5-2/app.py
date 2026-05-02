@@ -300,6 +300,79 @@ def send_reminder(car_id):
     return redirect(url_for("employee_dashboard"))
 
 
+@app.route("/employee/update_car/<int:car_id>", methods=["POST"])
+@login_required("employee")
+def employee_update_car(car_id):
+    """Employee edits a car (car_type, phone, wash_type, status).
+    Price is recomputed from the wash_type."""
+    car_type   = request.form.get("car_type", "").strip()
+    phone      = request.form.get("phone", "").strip()
+    wash_type  = request.form.get("wash_type", "").strip()
+    new_status = request.form.get("status", "").strip()
+
+    if not car_type or not phone or not wash_type or not new_status:
+        flash("All fields are required.", "error")
+        return redirect(url_for("employee_dashboard"))
+    if wash_type not in PRICES:
+        flash("Invalid wash type.", "error")
+        return redirect(url_for("employee_dashboard"))
+    if new_status not in ("Started", "In Progress", "Finished"):
+        flash("Invalid status.", "error")
+        return redirect(url_for("employee_dashboard"))
+    if not phone.replace("+", "").replace(" ", "").isdigit():
+        flash("Phone number must contain only digits.", "error")
+        return redirect(url_for("employee_dashboard"))
+
+    price = PRICES[wash_type]
+
+    conn = get_db_connection()
+    car  = conn.execute("SELECT * FROM cars WHERE id = ?", (car_id,)).fetchone()
+    if not car:
+        conn.close()
+        flash("Car not found.", "error")
+        return redirect(url_for("employee_dashboard"))
+
+    old_status = car["status"]
+    conn.execute(
+        """UPDATE cars
+              SET car_type = ?, phone = ?, wash_type = ?, price = ?, status = ?
+            WHERE id = ?""",
+        (car_type, phone, wash_type, price, new_status, car_id)
+    )
+    conn.commit()
+    conn.close()
+
+    # If the status just became "Finished", trigger the pickup WhatsApp
+    if new_status == "Finished" and old_status != "Finished":
+        wa_entry = send_whatsapp(
+            phone,
+            wa_text("ready"),
+            code=car["code"]
+        )
+        flash(wa_entry["link"], "whatsapp")
+
+    flash("Car updated successfully.", "success")
+    return redirect(url_for("employee_dashboard"))
+
+
+@app.route("/employee/delete_car/<int:car_id>", methods=["POST"])
+@login_required("employee")
+def employee_delete_car(car_id):
+    """Employee deletes a car record."""
+    conn = get_db_connection()
+    car  = conn.execute("SELECT * FROM cars WHERE id = ?", (car_id,)).fetchone()
+    if not car:
+        conn.close()
+        flash("Car not found.", "error")
+        return redirect(url_for("employee_dashboard"))
+
+    conn.execute("DELETE FROM cars WHERE id = ?", (car_id,))
+    conn.commit()
+    conn.close()
+    flash(f"Car #{car['code']} deleted successfully.", "success")
+    return redirect(url_for("employee_dashboard"))
+
+
 # =============================================================
 #                 CLIENT ROUTES
 # =============================================================

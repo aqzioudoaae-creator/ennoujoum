@@ -7,8 +7,8 @@
 /* ---------- CSS Variables : LIGHT MODE (default) ---------- */
 :root {
     /* Soft, natural amber/yellow — easier on the eyes */
-    --yellow:        #ddce23;
-    --yellow-dark:   #dade1f;
+    --yellow:        #D4A845;
+    --yellow-dark:   #B8902E;
     --yellow-light:  #FAF3DD;
     --yellow-soft:   rgba(212, 168, 69, .15);
 
@@ -621,6 +621,39 @@ html[dir="rtl"] .timeline { flex-direction: row-reverse; }
 }
 
 /* Tables */
+/* ---------- Search bar ---------- */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+.search-input {
+    flex: 1;
+    min-width: 220px;
+    max-width: 400px;
+    padding: 9px 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    font-size: .9rem;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--text);
+    transition: var(--transition);
+}
+.search-input:focus {
+    outline: none;
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 3px var(--yellow-soft);
+}
+.search-input::placeholder { color: var(--text-muted); }
+.search-empty {
+    color: var(--text-muted);
+    font-size: .85rem;
+    font-style: italic;
+}
+
 .table-wrapper {
     overflow-x: auto;
     border-radius: var(--radius-sm);
