@@ -245,16 +245,13 @@
                             </a>
 
                             {% if c.status == 'Finished' %}
-                            <form method="POST"
-                                  action="{{ url_for('admin_send_reminder', car_id=c.id) }}"
-                                  class="inline-form">
-                                <button type="submit"
-                                        class="btn-mini"
-                                        data-i18n-title="emp.send.reminder"
-                                        title="Envoyer un rappel">
-                                    Rappel
-                                </button>
-                            </form>
+                            <a class="btn-mini"
+                               target="_blank" rel="noopener"
+                               data-i18n-title="emp.send.reminder"
+                               title="Envoyer un rappel"
+                               href="{{ build_whatsapp_link(c.phone, wa_text('reminder', code=c.code)) }}">
+                                Rappel
+                            </a>
                             {% endif %}
 
                             <form method="POST"
