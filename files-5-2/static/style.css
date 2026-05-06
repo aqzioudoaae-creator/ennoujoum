@@ -7,7 +7,7 @@
 /* ---------- CSS Variables : LIGHT MODE (default) ---------- */
 :root {
     /* Soft, natural amber/yellow — easier on the eyes */
-    --yellow:        #D4A845;
+    --yellow:        #d44545;
     --yellow-dark:   #B8902E;
     --yellow-light:  #FAF3DD;
     --yellow-soft:   rgba(212, 168, 69, .15);
