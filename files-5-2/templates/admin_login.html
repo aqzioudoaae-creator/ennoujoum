@@ -12,7 +12,7 @@
             <div class="form-group">
                 <label for="username" data-i18n="login.field.username">Nom d'utilisateur</label>
                 <input type="text" id="username" name="username"
-                       placeholder="admin" required autofocus>
+                       placeholder="" required autofocus>
             </div>
 
             <div class="form-group">
@@ -24,9 +24,12 @@
             <button type="submit" class="btn btn-primary btn-full" data-i18n="login.btn.login">Connexion</button>
         </form>
 
-        <div class="hint">
-            <small><span data-i18n="login.hint">Identifiants par défaut :</span> <strong>admin / admin123</strong></small>
-        </div>
+        <p class="muted small" style="margin-top:18px;">
+            <span data-i18n="login.no_account">Pas encore de compte ?</span>
+            <a href="{{ url_for('admin_register') }}"
+               style="color: var(--yellow-dark); font-weight:600;"
+               data-i18n="login.btn.register">S'inscrire</a>
+        </p>
 
         <a href="{{ url_for('home') }}" class="back-link" data-i18n="login.back">← Retour à l'accueil</a>
     </div>

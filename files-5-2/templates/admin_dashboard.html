@@ -103,6 +103,100 @@
         </form>
     </div>
 
+    <!-- ============ MANAGERS MANAGEMENT ============ -->
+    {% if managers_pending %}
+    <div class="card slide-up" style="animation-delay:.05s; border-top: 3px solid var(--yellow);">
+        <h3 class="card-title">
+            <span data-i18n="admin.pending.title">Demandes d'inscription en attente</span>
+            ({{ managers_pending|length }})
+        </h3>
+        <p class="muted small" data-i18n="admin.pending.note" style="margin-bottom:14px;">
+            Approuvez ou rejetez les nouvelles inscriptions de manager.
+        </p>
+
+        <table class="data-table small-table">
+            <thead>
+                <tr>
+                    <th data-i18n="th.id">ID</th>
+                    <th data-i18n="th.username">Utilisateur</th>
+                    <th data-i18n="th.date">Date</th>
+                    <th data-i18n="th.action">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in managers_pending %}
+                <tr>
+                    <td>{{ m.id }}</td>
+                    <td>{{ m.username }}</td>
+                    <td><small>{{ m.date or '—' }}</small></td>
+                    <td>
+                        <form method="POST"
+                              action="{{ url_for('admin_approve_manager', manager_id=m.id) }}"
+                              class="inline-form">
+                            <button type="submit" class="btn-mini"
+                                    style="background: var(--green-soft); color: var(--green-dark); border-color: var(--green);"
+                                    data-i18n="admin.approve">Approuver</button>
+                        </form>
+                        <form method="POST"
+                              action="{{ url_for('admin_reject_manager', manager_id=m.id) }}"
+                              onsubmit="return confirm('Rejeter cette demande ?');"
+                              class="inline-form">
+                            <button type="submit" class="btn-mini danger"
+                                    data-i18n="admin.reject">Rejeter</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- ============ APPROVED MANAGERS LIST ============ -->
+    <div class="card slide-up" style="animation-delay:.06s">
+        <h3 class="card-title">
+            <span data-i18n="admin.managers.title">Managers</span>
+            ({{ managers_approved|length }})
+        </h3>
+
+        <table class="data-table small-table">
+            <thead>
+                <tr>
+                    <th data-i18n="th.id">ID</th>
+                    <th data-i18n="th.username">Utilisateur</th>
+                    <th data-i18n="th.action">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in managers_approved %}
+                <tr>
+                    <td>{{ m.id }}</td>
+                    <td>
+                        {{ m.username }}
+                        {% if m.id == current_manager_id %}
+                            <span class="user-tag" style="margin-left:6px;"
+                                  data-i18n="admin.you">(Vous)</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if m.id != current_manager_id %}
+                        <form method="POST"
+                              action="{{ url_for('admin_delete_manager', manager_id=m.id) }}"
+                              onsubmit="return confirm('Supprimer le manager {{ m.username }} ?');"
+                              class="inline-form">
+                            <button type="submit" class="btn-mini danger"
+                                    data-i18n="admin.delete">Supprimer</button>
+                        </form>
+                        {% else %}
+                            <em class="muted small" data-i18n="admin.current">compte actuel</em>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     <!-- ============ EMPLOYEES MANAGEMENT ============ -->
     <div class="two-col">
 

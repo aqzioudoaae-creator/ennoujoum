@@ -407,17 +407,77 @@ def client_track(code):
 # =============================================================
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
-    """Admin login (hardcoded admin / admin123)."""
+    """Admin login. Looks up the manager in DB and checks the account is approved."""
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
-        if username == "admin" and password == "admin123":
+
+        conn = get_db_connection()
+        mgr = conn.execute(
+            "SELECT * FROM managers WHERE username = ? AND password = ?",
+            (username, password)
+        ).fetchone()
+        conn.close()
+
+        if mgr:
+            if mgr["status"] != "approved":
+                flash("Your account is awaiting approval from another manager.", "error")
+                return render_template("admin_login.html")
             session["role"] = "admin"
-            session["username"] = "admin"
-            flash("Welcome, Admin!", "success")
+            session["username"] = username
+            session["manager_id"] = mgr["id"]
+            flash(f"Welcome, {username}!", "success")
             return redirect(url_for("admin_dashboard"))
-        flash("Invalid admin credentials.", "error")
+        flash("Invalid manager credentials.", "error")
     return render_template("admin_login.html")
+
+
+@app.route("/admin/register", methods=["GET", "POST"])
+def admin_register():
+    """Manager self-registration.
+    - If NO manager exists yet -> the first one is auto-approved.
+    - Otherwise -> account is created with status='pending' and must be approved."""
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+
+        if not username or not password:
+            flash("Username and password are required.", "error")
+            return redirect(url_for("admin_register"))
+        if len(password) < 4:
+            flash("Password must be at least 4 characters.", "error")
+            return redirect(url_for("admin_register"))
+
+        conn = get_db_connection()
+        existing = conn.execute(
+            "SELECT id FROM managers WHERE username = ?", (username,)
+        ).fetchone()
+        if existing:
+            conn.close()
+            flash("This username is already taken.", "error")
+            return redirect(url_for("admin_register"))
+
+        # First manager is auto-approved
+        any_approved = conn.execute(
+            "SELECT id FROM managers WHERE status = 'approved' LIMIT 1"
+        ).fetchone()
+        new_status = "approved" if any_approved is None else "pending"
+
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        conn.execute(
+            "INSERT INTO managers (username, password, status, date) VALUES (?, ?, ?, ?)",
+            (username, password, new_status, date)
+        )
+        conn.commit()
+        conn.close()
+
+        if new_status == "approved":
+            flash("Account created and approved automatically (first manager). You can log in now.", "success")
+        else:
+            flash("Account created. Waiting for an existing manager to approve it.", "success")
+        return redirect(url_for("admin_login"))
+
+    return render_template("admin_register.html")
 
 
 @app.route("/admin/dashboard")
@@ -427,6 +487,12 @@ def admin_dashboard():
     conn = get_db_connection()
     cars      = conn.execute("SELECT * FROM cars ORDER BY id DESC").fetchall()
     employees = conn.execute("SELECT * FROM employees ORDER BY id ASC").fetchall()
+    managers_approved = conn.execute(
+        "SELECT * FROM managers WHERE status = 'approved' ORDER BY id ASC"
+    ).fetchall()
+    managers_pending  = conn.execute(
+        "SELECT * FROM managers WHERE status = 'pending'  ORDER BY id ASC"
+    ).fetchall()
     conn.close()
 
     # ------- Calculate revenue stats -------
@@ -466,6 +532,9 @@ def admin_dashboard():
         "admin_dashboard.html",
         cars=cars,
         employees=employees,
+        managers_approved=managers_approved,
+        managers_pending=managers_pending,
+        current_manager_id=session.get("manager_id"),
         stats=stats,
         prices=PRICES,
         pending_whatsapp=pending_whatsapp,
@@ -731,6 +800,84 @@ def api_status(code):
         "wash":     car["wash_type"],
         "price":    car["price"]
     })
+
+
+# =============================================================
+#         ADMIN — MANAGER APPROVAL & MANAGEMENT
+# =============================================================
+@app.route("/admin/approve_manager/<int:manager_id>", methods=["POST"])
+@login_required("admin")
+def admin_approve_manager(manager_id):
+    """Approve a pending manager registration."""
+    conn = get_db_connection()
+    mgr  = conn.execute("SELECT * FROM managers WHERE id = ?", (manager_id,)).fetchone()
+    if not mgr:
+        conn.close()
+        flash("Manager not found.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if mgr["status"] == "approved":
+        conn.close()
+        flash("This manager is already approved.", "info")
+        return redirect(url_for("admin_dashboard"))
+
+    conn.execute("UPDATE managers SET status = 'approved' WHERE id = ?", (manager_id,))
+    conn.commit()
+    conn.close()
+    flash(f"Manager '{mgr['username']}' approved.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/reject_manager/<int:manager_id>", methods=["POST"])
+@login_required("admin")
+def admin_reject_manager(manager_id):
+    """Reject (delete) a pending manager registration."""
+    conn = get_db_connection()
+    mgr  = conn.execute("SELECT * FROM managers WHERE id = ?", (manager_id,)).fetchone()
+    if not mgr:
+        conn.close()
+        flash("Manager not found.", "error")
+        return redirect(url_for("admin_dashboard"))
+    if mgr["status"] == "approved":
+        conn.close()
+        flash("Use the delete button to remove an approved manager.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    conn.execute("DELETE FROM managers WHERE id = ?", (manager_id,))
+    conn.commit()
+    conn.close()
+    flash(f"Manager request from '{mgr['username']}' rejected.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin/delete_manager/<int:manager_id>", methods=["POST"])
+@login_required("admin")
+def admin_delete_manager(manager_id):
+    """Remove an approved manager (cannot remove yourself or the last one)."""
+    if manager_id == session.get("manager_id"):
+        flash("You cannot delete your own account.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    conn = get_db_connection()
+    mgr  = conn.execute("SELECT * FROM managers WHERE id = ?", (manager_id,)).fetchone()
+    if not mgr:
+        conn.close()
+        flash("Manager not found.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    other_approved = conn.execute(
+        "SELECT id FROM managers WHERE status = 'approved' AND id != ?",
+        (manager_id,)
+    ).fetchone()
+    if mgr["status"] == "approved" and not other_approved:
+        conn.close()
+        flash("Cannot delete the last approved manager.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    conn.execute("DELETE FROM managers WHERE id = ?", (manager_id,))
+    conn.commit()
+    conn.close()
+    flash(f"Manager '{mgr['username']}' deleted.", "success")
+    return redirect(url_for("admin_dashboard"))
 
 
 # =============================================================

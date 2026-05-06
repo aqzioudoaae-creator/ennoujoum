@@ -58,6 +58,18 @@ def init_db():
         )
     """)
 
+    # ---------- managers table ----------
+    # status: 'approved' = can log in, 'pending' = waiting for approval
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS managers (
+            id       INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT    UNIQUE NOT NULL,
+            password TEXT    NOT NULL,
+            status   TEXT    NOT NULL DEFAULT 'pending',
+            date     TEXT
+        )
+    """)
+
     # ---------- default employee ----------
     cur.execute("SELECT id FROM employees WHERE username = 'admin1'")
     if not cur.fetchone():
