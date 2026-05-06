@@ -9,14 +9,14 @@
 /* ---------- i18n dictionary (FR + AR) ---------- */
 const I18N = {
     fr: {
-        "page.title.home":          "Ennojoum — Lavage Auto",
-        "page.title.welcome":       "Ennojoum — Bienvenue",
-        "page.title.employee_login":"Connexion Employé — Ennojoum",
+        "page.title.home":          "Ennoujoum — Lavage Auto",
+        "page.title.welcome":       "Ennoujoum — Bienvenue",
+        "page.title.employee_login":"Connexion Employé — Ennoujoum",
         "page.title.client_login":  "Client — Suivez votre voiture",
-        "page.title.admin_login":   "Connexion Manager — Ennojoum",
-        "page.title.employee_dash": "Tableau de bord Employé — Ennojoum",
-        "page.title.admin_dash":    "Tableau de bord Manager — Ennojoum",
-        "page.title.tracking":      "Suivi — Ennojoum",
+        "page.title.admin_login":   "Connexion Manager — Ennoujoum",
+        "page.title.employee_dash": "Tableau de bord Employé — Ennoujoum",
+        "page.title.admin_dash":    "Tableau de bord Manager — Ennoujoum",
+        "page.title.tracking":      "Suivi — Ennoujoum",
 
         "nav.home":                 "Accueil",
         "nav.track":                "Suivre ma voiture",
@@ -24,7 +24,7 @@ const I18N = {
         "nav.logout":                "Déconnexion",
         "nav.admin":                "Administrateur",
 
-        "footer.text":              "Ennojoum — Système de gestion de lavage auto",
+        "footer.text":              "Ennoujoum — Système de gestion de lavage auto",
 
         "home.welcome":             "Bienvenue chez",
         "home.subtitle":            "Gestion intelligente du lavage auto. Plus d'attente en file. Recevez une notification WhatsApp dès que votre voiture est prête.",
