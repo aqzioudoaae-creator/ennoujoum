@@ -70,13 +70,7 @@ def init_db():
         )
     """)
 
-    # ---------- default employee ----------
-    cur.execute("SELECT id FROM employees WHERE username = 'admin1'")
-    if not cur.fetchone():
-        cur.execute(
-            "INSERT INTO employees (username, password) VALUES (?, ?)",
-            ("admin1", "1234")
-        )
+    # No default employees — the manager must create them after signing up.
 
     conn.commit()
     conn.close()

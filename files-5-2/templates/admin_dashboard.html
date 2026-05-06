@@ -236,7 +236,6 @@
                                     class="btn-mini"
                                     onclick="toggleEmpEdit({{ e.id }})"
                                     data-i18n="admin.edit">Modifier</button>
-                            {% if e.username != 'admin1' %}
                             <form method="POST"
                                   action="{{ url_for('delete_employee', emp_id=e.id) }}"
                                   onsubmit="return confirm('Delete employee {{ e.username }}?');"
@@ -245,9 +244,6 @@
                                         class="btn-mini danger"
                                         data-i18n="admin.delete">Supprimer</button>
                             </form>
-                            {% else %}
-                                <em class="muted small" data-i18n="admin.default">par défaut</em>
-                            {% endif %}
                         </td>
                     </tr>
                     <!-- Hidden inline edit form -->
