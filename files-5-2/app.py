@@ -34,7 +34,7 @@ app.secret_key = "mnojo_super_secret_key_2025"   # used for sessions / flash mes
 PRICES = {
     "Normal": 40,
     "Pro": 70,
-    "Pro Max": 110
+    "Pro Max": 300
 }
 
 # In-memory log of "WhatsApp" messages (simulation only)
