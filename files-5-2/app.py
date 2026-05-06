@@ -34,7 +34,7 @@ app.secret_key = "ennoujoum_super_secret_key_2026"   # used for sessions / flash
 PRICES = {
     "Normal": 40,
     "Pro": 70,
-    "Pro Max": 300
+    "Pro Max": 110
 }
 
 # In-memory log of "WhatsApp" messages (simulation only)
