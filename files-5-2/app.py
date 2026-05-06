@@ -21,7 +21,18 @@ import sqlite3
 import random
 import os
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
+
+# Morocco timezone is UTC+1 year-round (no DST since 2018, except briefly
+# during Ramadan when the country temporarily switches to UTC+0).
+# Using a fixed +1 offset matches the local clock for the vast majority of the year.
+LOCAL_TZ = timezone(timedelta(hours=1))
+
+
+def now_local():
+    """Return the current datetime in the local (Morocco) timezone."""
+    return datetime.now(LOCAL_TZ)
 from database import init_db, get_db_connection
 
 # -------------------------------------------------------------
@@ -82,7 +93,7 @@ def send_whatsapp(phone, message, code=None):
     entry = {
         "phone": phone,
         "message": message,
-        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "time": now_local().strftime("%Y-%m-%d %H:%M:%S"),
         "code": code,
         "link": build_whatsapp_link(phone, message),
     }
@@ -222,7 +233,7 @@ def register_car():
 
     price = PRICES[wash_type]
     code  = generate_unique_code()
-    date  = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    date  = now_local().strftime("%Y-%m-%d %H:%M:%S")
 
     # -------- save in DB --------
     conn = get_db_connection()
@@ -436,16 +447,27 @@ def admin_login():
 def admin_register():
     """Manager self-registration.
     - If NO manager exists yet -> the first one is auto-approved.
-    - Otherwise -> account is created with status='pending' and must be approved."""
+    - Otherwise -> account is created with status='pending' and must be approved.
+    - The manager is REQUIRED to set a security question + answer so they can
+      reset their password if they ever forget it.
+    """
     if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "").strip()
+        username          = request.form.get("username", "").strip()
+        password          = request.form.get("password", "").strip()
+        security_question = request.form.get("security_question", "").strip()
+        security_answer   = request.form.get("security_answer", "").strip()
 
         if not username or not password:
             flash("Username and password are required.", "error")
             return redirect(url_for("admin_register"))
         if len(password) < 4:
             flash("Password must be at least 4 characters.", "error")
+            return redirect(url_for("admin_register"))
+        if not security_question or not security_answer:
+            flash("A security question and its answer are required (used to reset your password if you forget it).", "error")
+            return redirect(url_for("admin_register"))
+        if len(security_answer) < 2:
+            flash("Security answer is too short.", "error")
             return redirect(url_for("admin_register"))
 
         conn = get_db_connection()
@@ -463,10 +485,14 @@ def admin_register():
         ).fetchone()
         new_status = "approved" if any_approved is None else "pending"
 
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date = now_local().strftime("%Y-%m-%d %H:%M:%S")
+        # Store the security answer in lowercase to be tolerant of casing
         conn.execute(
-            "INSERT INTO managers (username, password, status, date) VALUES (?, ?, ?, ?)",
-            (username, password, new_status, date)
+            """INSERT INTO managers
+                  (username, password, status, date, security_question, security_answer)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (username, password, new_status, date,
+             security_question, security_answer.lower())
         )
         conn.commit()
         conn.close()
@@ -478,6 +504,90 @@ def admin_register():
         return redirect(url_for("admin_login"))
 
     return render_template("admin_register.html")
+
+
+# =============================================================
+#         ADMIN — FORGOT / RESET PASSWORD
+# =============================================================
+@app.route("/admin/forgot_password", methods=["GET", "POST"])
+def admin_forgot_password():
+    """Step 1 of password recovery: enter username, get the security question.
+    Reserved for managers only — employees use a different flow (the manager
+    resets their password directly from the dashboard)."""
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        if not username:
+            flash("Please enter your username.", "error")
+            return render_template("admin_forgot.html")
+
+        conn = get_db_connection()
+        mgr  = conn.execute(
+            "SELECT * FROM managers WHERE username = ?", (username,)
+        ).fetchone()
+        conn.close()
+
+        if not mgr:
+            # Don't leak whether the username exists — show a generic message
+            flash("If this account exists, the next step will appear.", "info")
+            return render_template("admin_forgot.html")
+        if not mgr["security_question"]:
+            flash("This account has no security question on file. Please ask another manager to delete and recreate your account.",
+                  "error")
+            return render_template("admin_forgot.html")
+        if mgr["status"] != "approved":
+            flash("This account is not approved yet. Wait for approval before resetting the password.",
+                  "error")
+            return render_template("admin_forgot.html")
+
+        # Show step 2: the security question + the answer/new-password form
+        return render_template(
+            "admin_forgot.html",
+            step=2,
+            username=username,
+            security_question=mgr["security_question"]
+        )
+
+    return render_template("admin_forgot.html")
+
+
+@app.route("/admin/reset_password", methods=["POST"])
+def admin_reset_password():
+    """Step 2 of password recovery: validate the answer, then save the new password."""
+    username     = request.form.get("username", "").strip()
+    answer       = request.form.get("security_answer", "").strip().lower()
+    new_password = request.form.get("new_password", "").strip()
+
+    if not username or not answer or not new_password:
+        flash("All fields are required.", "error")
+        return redirect(url_for("admin_forgot_password"))
+    if len(new_password) < 4:
+        flash("New password must be at least 4 characters.", "error")
+        return redirect(url_for("admin_forgot_password"))
+
+    conn = get_db_connection()
+    mgr  = conn.execute(
+        "SELECT * FROM managers WHERE username = ? AND status = 'approved'",
+        (username,)
+    ).fetchone()
+
+    if not mgr or not mgr["security_answer"]:
+        conn.close()
+        flash("Unable to reset the password.", "error")
+        return redirect(url_for("admin_forgot_password"))
+
+    if answer != mgr["security_answer"]:
+        conn.close()
+        flash("Wrong answer to the security question.", "error")
+        return redirect(url_for("admin_forgot_password"))
+
+    conn.execute(
+        "UPDATE managers SET password = ? WHERE id = ?",
+        (new_password, mgr["id"])
+    )
+    conn.commit()
+    conn.close()
+    flash("Password updated successfully. You can now log in.", "success")
+    return redirect(url_for("admin_login"))
 
 
 @app.route("/admin/dashboard")
@@ -496,7 +606,7 @@ def admin_dashboard():
     conn.close()
 
     # ------- Calculate revenue stats -------
-    today  = datetime.now().date()
+    today  = now_local().date()
     week_ago  = today - timedelta(days=7)
     month_ago = today - timedelta(days=30)
 
@@ -657,7 +767,7 @@ def admin_register_car():
 
     code  = generate_unique_code()
     price = PRICES[wash_type]
-    date  = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    date  = now_local().strftime("%Y-%m-%d %H:%M:%S")
 
     conn = get_db_connection()
     conn.execute(

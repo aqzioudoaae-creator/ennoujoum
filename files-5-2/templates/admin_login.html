@@ -24,7 +24,13 @@
             <button type="submit" class="btn btn-primary btn-full" data-i18n="login.btn.login">Connexion</button>
         </form>
 
-        <p class="muted small" style="margin-top:18px;">
+        <p class="muted small" style="margin-top:14px; margin-bottom: 4px;">
+            <a href="{{ url_for('admin_forgot_password') }}"
+               style="color: var(--yellow-dark); font-weight:600;"
+               data-i18n="login.forgot">Mot de passe oublié ?</a>
+        </p>
+
+        <p class="muted small" style="margin-top:8px;">
             <span data-i18n="login.no_account">Pas encore de compte ?</span>
             <a href="{{ url_for('admin_register') }}"
                style="color: var(--yellow-dark); font-weight:600;"

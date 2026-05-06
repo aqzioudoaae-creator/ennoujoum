@@ -62,13 +62,27 @@ def init_db():
     # status: 'approved' = can log in, 'pending' = waiting for approval
     cur.execute("""
         CREATE TABLE IF NOT EXISTS managers (
-            id       INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT    UNIQUE NOT NULL,
-            password TEXT    NOT NULL,
-            status   TEXT    NOT NULL DEFAULT 'pending',
-            date     TEXT
+            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            username          TEXT    UNIQUE NOT NULL,
+            password          TEXT    NOT NULL,
+            status            TEXT    NOT NULL DEFAULT 'pending',
+            date              TEXT,
+            security_question TEXT,
+            security_answer   TEXT
         )
     """)
+
+    # Add the security columns to pre-existing managers tables (older DBs)
+    # Each ALTER is wrapped in try/except because SQLite raises if the column
+    # already exists, and we want to keep init_db idempotent.
+    for col_def in (
+        "ALTER TABLE managers ADD COLUMN security_question TEXT",
+        "ALTER TABLE managers ADD COLUMN security_answer   TEXT",
+    ):
+        try:
+            cur.execute(col_def)
+        except sqlite3.OperationalError:
+            pass  # column already exists
 
     # No default employees — the manager must create them after signing up.
 

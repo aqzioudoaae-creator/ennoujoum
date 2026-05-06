@@ -23,6 +23,30 @@
                        placeholder="••••••••" required minlength="4">
             </div>
 
+            <hr style="margin: 18px 0; border: 0; border-top: 1px solid var(--border);">
+
+            <p class="muted small" data-i18n="register.security.note" style="margin-bottom: 12px;">
+                Question de sécurité — utile pour récupérer votre mot de passe en cas d'oubli.
+            </p>
+
+            <div class="form-group">
+                <label for="security_question" data-i18n="register.security.question.label">
+                    Votre question de sécurité
+                </label>
+                <input type="text" id="security_question" name="security_question"
+                       placeholder="Ex : Nom de mon premier animal ?"
+                       required minlength="5" maxlength="200">
+            </div>
+
+            <div class="form-group">
+                <label for="security_answer" data-i18n="register.security.answer.label">
+                    Réponse
+                </label>
+                <input type="text" id="security_answer" name="security_answer"
+                       placeholder=""
+                       required minlength="2" maxlength="100">
+            </div>
+
             <button type="submit" class="btn btn-primary btn-full" data-i18n="login.btn.register">S'inscrire</button>
         </form>
 
