@@ -1,8 +1,6 @@
 /* =========================================================
-   ENNOUJOUM — Main bootstrap (DOM ready)
-   This file is loaded LAST (after i18n_fr.js, i18n_ar.js,
-   theme.js, language.js, search-filter.js). It just wires
-   the DOM events to the helpers exposed by those modules.
+   main.js — Initialisation DOM et interactions
+   Dépend de : theme.js, language.js
    ========================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,11 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apply translations now that DOM is ready
     applyLang(getLang());
 
-    // Theme toggle button
+    // Wire theme toggle button
     const themeBtn = document.getElementById('theme-toggle');
     if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
-    // Language toggle button
+    // Wire language toggle button
     const langBtn = document.getElementById('lang-toggle');
     if (langBtn) langBtn.addEventListener('click', toggleLang);
 
@@ -22,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.flash').forEach((flash) => {
         setTimeout(() => {
             flash.style.transition = 'opacity .4s, transform .4s';
-            flash.style.opacity   = '0';
-            flash.style.transform = 'translateX(40px)';
+            flash.style.opacity    = '0';
+            flash.style.transform  = 'translateX(40px)';
             setTimeout(() => flash.remove(), 400);
         }, 4000);
     });
@@ -38,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Highlight code input as user types (numeric only, max 3 digits)
+    // Code input: numeric only, max 3 digits
     const codeInput = document.getElementById('code');
     if (codeInput) {
         codeInput.addEventListener('input', (e) => {

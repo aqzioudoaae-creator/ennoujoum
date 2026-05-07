@@ -1,7 +1,5 @@
 /* =========================================================
-   ENNOUJOUM — Theme (light / dark)
-   Persisted in localStorage. Apply the data-theme attribute
-   on <html> so CSS variables can switch.
+   theme.js — Gestion du thème (light / dark)
    ========================================================= */
 
 function getTheme() {
@@ -18,6 +16,13 @@ function toggleTheme() {
     setTheme(getTheme() === 'dark' ? 'light' : 'dark');
 }
 
-/* Apply the saved theme as early as possible (before DOM ready)
-   so the page does not flash the wrong colors on load. */
-document.documentElement.setAttribute('data-theme', getTheme());
+/* Apply theme immediately before paint to avoid flash */
+(function earlyTheme() {
+    try {
+        var t = localStorage.getItem('mnojo_theme') || 'light';
+        var l = localStorage.getItem('mnojo_lang')  || 'fr';
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.setAttribute('lang', l);
+        document.documentElement.setAttribute('dir', l === 'ar' ? 'rtl' : 'ltr');
+    } catch (e) {}
+})();

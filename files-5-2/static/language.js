@@ -1,11 +1,9 @@
 /* =========================================================
-   ENNOUJOUM — Language switcher (FR / AR)
-   Reads I18N_FR and I18N_AR (loaded BEFORE this file).
-   Persists the choice in localStorage AND in a cookie so
-   the Python backend can read the language for WhatsApp.
+   language.js — Gestion de la langue (FR / AR + RTL)
+   Dépend de : i18n_fr.js, i18n_ar.js
    ========================================================= */
 
-const I18N = { fr: I18N_FR, ar: I18N_AR };
+const I18N = { fr: window.I18N_FR, ar: window.I18N_AR };
 
 function getLang() {
     return localStorage.getItem('mnojo_lang') || 'fr';
@@ -14,14 +12,7 @@ function getLang() {
 function setLang(lang) {
     if (lang !== 'fr' && lang !== 'ar') lang = 'fr';
     localStorage.setItem('mnojo_lang', lang);
-    // Set a cookie too so the Python backend can read the language
-    // (used for translating WhatsApp messages server-side)
-    document.cookie = 'mnojo_lang=' + lang + '; path=/; max-age=31536000; SameSite=Lax';
     applyLang(lang);
-}
-
-function toggleLang() {
-    setLang(getLang() === 'fr' ? 'ar' : 'fr');
 }
 
 function applyLang(lang) {
@@ -55,7 +46,7 @@ function applyLang(lang) {
         if (dict[key] !== undefined) document.title = dict[key];
     }
 
-    // Translate status badges (text comes from server in English)
+    // Translate status badges
     const statusMap = {
         "Started":     dict["status.started"],
         "In Progress": dict["status.in_progress"],
@@ -66,21 +57,17 @@ function applyLang(lang) {
         if (statusMap[original]) el.textContent = statusMap[original];
     });
 
-    // Translate <select> option labels (value attribute stays in English for the backend)
+    // Translate <select> option labels
     document.querySelectorAll('option[data-i18n-status]').forEach(opt => {
         const original = opt.getAttribute('data-i18n-status');
         if (statusMap[original]) opt.textContent = statusMap[original];
     });
 
-    // Update the language toggle button label (shows the OTHER language)
+    // Update language toggle button label
     const langBtn = document.getElementById('lang-toggle');
     if (langBtn) langBtn.textContent = dict["common.lang.toggle"];
 }
 
-/* Apply the saved language as early as possible (before DOM ready) */
-(function earlyLangInit() {
-    const lang = getLang();
-    document.documentElement.setAttribute('lang', lang);
-    document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-    document.cookie = 'mnojo_lang=' + lang + '; path=/; max-age=31536000; SameSite=Lax';
-})();
+function toggleLang() {
+    setLang(getLang() === 'fr' ? 'ar' : 'fr');
+}
