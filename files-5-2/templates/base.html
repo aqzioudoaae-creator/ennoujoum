@@ -137,6 +137,16 @@
         <p>&copy; 2026 <strong>Ennoujoum</strong> <span data-i18n="footer.text">— Système de gestion de lavage auto</span></p>
     </footer>
 
+    <!-- JS modules — load order matters:
+         1) i18n dictionaries (defines I18N_FR / I18N_AR)
+         2) theme + language helpers (depend on the dictionaries)
+         3) search-filter helper (independent)
+         4) main bootstrap (uses everything above on DOM ready) -->
+    <script src="{{ url_for('static', filename='i18n_fr.js') }}"></script>
+    <script src="{{ url_for('static', filename='i18n_ar.js') }}"></script>
+    <script src="{{ url_for('static', filename='theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='language.js') }}"></script>
+    <script src="{{ url_for('static', filename='search-filter.js') }}"></script>
     <script src="{{ url_for('static', filename='main.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>
