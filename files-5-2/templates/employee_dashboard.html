@@ -13,6 +13,29 @@
     {% include "_emp_register.html" %}
     {% include "_emp_cars_table.html" %}
 
+    <!-- ============ WHATSAPP LOG ============ -->
+    <div class="card slide-up" style="animation-delay:.15s">
+        <h3 class="card-title" data-i18n="admin.whatsapp.title">Notifications WhatsApp récentes</h3>
+        {% if whatsapp_log %}
+            <ul class="msg-list">
+                {% for m in whatsapp_log %}
+                    <li>
+                        <span class="msg-time">{{ m.time }}</span>
+                        <span class="msg-phone">{{ m.phone }}</span>
+                        <span class="msg-text">{{ m.message }}</span>
+                        {% if m.link %}
+                            <a href="{{ m.link }}" target="_blank" rel="noopener"
+                               class="btn-mini" style="margin-left:8px;"
+                               data-i18n="admin.whatsapp.open">Ouvrir</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="empty-state" data-i18n="admin.whatsapp.empty">Aucun message envoyé pour l'instant.</p>
+        {% endif %}
+    </div>
+
 </section>
 {% endblock %}
 

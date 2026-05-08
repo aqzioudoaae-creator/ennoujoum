@@ -104,18 +104,20 @@ def send_whatsapp(phone, message, code=None):
 # -------------------------------------------------------------
 # WhatsApp messages (FR / AR)
 # -------------------------------------------------------------
+SITE_URL = "https://ennoujoum.com"
+
 WA_MESSAGES = {
     "fr": {
-        "registered":  "Bonjour, votre voiture a bien été enregistrée. Votre code de suivi est : {code}. Vous pouvez suivre l'avancement du lavage sur notre site.",
-        "ready":       "Bonjour, votre voiture est prête. Vous pouvez venir la récupérer. Merci.",
-        "reminder":    "Bonjour, petit rappel : votre voiture (code {code}) vous attend toujours au lavage. Merci de venir la récupérer.",
-        "tracking":    "Votre code de suivi est : {code}",
+        "registered":  "Bonjour, votre voiture a bien été enregistrée. Votre code de suivi est : {code}.\nSuivez votre voiture ici : " + SITE_URL,
+        "ready":       "Bonjour, votre voiture est prête. Vous pouvez venir la récupérer. Merci.\n" + SITE_URL,
+        "reminder":    "Bonjour, petit rappel : votre voiture (code {code}) vous attend toujours au lavage. Merci de venir la récupérer.\n" + SITE_URL,
+        "tracking":    "Votre code de suivi est : {code}\nSuivez votre voiture ici : " + SITE_URL,
     },
     "ar": {
-        "registered":  "مرحباً، تم تسجيل سيارتكم بنجاح. رمز التتبع الخاص بكم هو : {code}. يمكنكم متابعة تقدم الغسيل عبر موقعنا.",
-        "ready":       "مرحباً، سيارتكم جاهزة. يمكنكم القدوم لاستلامها. شكراً لكم.",
-        "reminder":    "مرحباً، تذكير بسيط : سيارتكم (الرمز {code}) لا تزال في انتظاركم بمحطة الغسيل. نرجو القدوم لاستلامها.",
-        "tracking":    "رمز التتبع الخاص بكم هو : {code}",
+        "registered":  "مرحباً، تم تسجيل سيارتكم بنجاح. رمز التتبع الخاص بكم هو : {code}.\nتابعوا سيارتكم هنا : " + SITE_URL,
+        "ready":       "مرحباً، سيارتكم جاهزة. يمكنكم القدوم لاستلامها. شكراً لكم.\n" + SITE_URL,
+        "reminder":    "مرحباً، تذكير بسيط : سيارتكم (الرمز {code}) لا تزال في انتظاركم بمحطة الغسيل. نرجو القدوم لاستلامها.\n" + SITE_URL,
+        "tracking":    "رمز التتبع الخاص بكم هو : {code}\nتابعوا سيارتكم هنا : " + SITE_URL,
     }
 }
 
@@ -209,6 +211,7 @@ def employee_dashboard():
         pending_whatsapp=pending_whatsapp,
         build_whatsapp_link=build_whatsapp_link,
         wa_text=wa_text,
+        whatsapp_log=list(reversed(WHATSAPP_LOG[-15:])),
     )
 
 
