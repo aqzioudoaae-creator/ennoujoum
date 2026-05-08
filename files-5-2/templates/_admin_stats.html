@@ -1,0 +1,47 @@
+    <!-- ============ STATS CARDS ============ -->
+    <div class="stats-grid">
+        <div class="stat-card slide-up">
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.total_cars }}</div>
+                <div class="stat-label" data-i18n="admin.stat.total">Total voitures</div>
+            </div>
+        </div>
+
+        <div class="stat-card slide-up" style="animation-delay:.05s">
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.daily_revenue }} DH</div>
+                <div class="stat-label" data-i18n="admin.stat.daily">Revenu du jour</div>
+            </div>
+        </div>
+
+        <div class="stat-card slide-up" style="animation-delay:.1s">
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.weekly_revenue }} DH</div>
+                <div class="stat-label" data-i18n="admin.stat.weekly">Revenu hebdo</div>
+            </div>
+        </div>
+
+        <div class="stat-card slide-up" style="animation-delay:.15s">
+            <div class="stat-info">
+                <div class="stat-value">{{ stats.monthly_revenue }} DH</div>
+                <div class="stat-label" data-i18n="admin.stat.monthly">Revenu mensuel</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ STATUS BREAKDOWN ============ -->
+    <div class="card slide-up" style="animation-delay:.2s">
+        <h3 class="card-title" data-i18n="admin.status.title">Répartition des statuts</h3>
+        <div class="status-summary">
+            <div class="status-pill status-started">
+                <span data-i18n="admin.status.started">Commencé :</span> <strong>{{ stats.started }}</strong>
+            </div>
+            <div class="status-pill status-progress">
+                <span data-i18n="admin.status.progress">En cours :</span> <strong>{{ stats.in_progress }}</strong>
+            </div>
+            <div class="status-pill status-finished">
+                <span data-i18n="admin.status.finished">Terminé :</span> <strong>{{ stats.finished }}</strong>
+            </div>
+        </div>
+    </div>
+

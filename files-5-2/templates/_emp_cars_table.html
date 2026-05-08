@@ -1,0 +1,157 @@
+    <!-- ============== ALL CARS WITH SEARCH + CRUD ============== -->
+    <div class="card slide-up" style="animation-delay:.1s">
+        <h3 class="card-title">
+            <span data-i18n="emp.cars.title">Toutes les voitures</span>
+            ({{ cars|length }})
+        </h3>
+
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text"
+                   id="cars-search"
+                   class="search-input"
+                   placeholder="Rechercher une voiture..."
+                   data-i18n-placeholder="search.cars"
+                   oninput="filterTable('cars-search', 'cars-table', 'cars-empty')">
+            <span id="cars-empty" class="search-empty" style="display:none;"
+                  data-i18n="search.empty">Aucun résultat trouvé</span>
+        </div>
+
+        {% if cars %}
+        <div class="table-wrapper">
+            <table class="data-table" id="cars-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="th.code">Code</th>
+                        <th data-i18n="th.car">Voiture</th>
+                        <th data-i18n="th.phone">Téléphone</th>
+                        <th data-i18n="th.wash">Lavage</th>
+                        <th data-i18n="th.price">Prix</th>
+                        <th data-i18n="th.status">Statut</th>
+                        <th data-i18n="th.date">Date</th>
+                        <th data-i18n="th.actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for c in cars %}
+                    <tr class="searchable-row"
+                        data-search="{{ c.code }} {{ c.car_type }} {{ c.phone }} {{ c.wash_type }} {{ c.price }} {{ c.status }}">
+                        <td><strong class="code-badge">{{ c.code }}</strong></td>
+                        <td>{{ c.car_type }}</td>
+                        <td>{{ c.phone }}</td>
+                        <td>{{ c.wash_type }}</td>
+                        <td>{{ c.price }} DH</td>
+                        <td>
+                            <span class="status-badge
+                                {% if c.status == 'Started' %}status-started
+                                {% elif c.status == 'In Progress' %}status-progress
+                                {% else %}status-finished{% endif %}"
+                                data-status-text="{{ c.status }}">
+                                {{ c.status }}
+                            </span>
+                        </td>
+                        <td><small>{{ c.date }}</small></td>
+                        <td class="actions">
+                            <!-- Quick status update -->
+                            <form method="POST"
+                                  action="{{ url_for('update_status', car_id=c.id) }}"
+                                  class="inline-form">
+                                <select name="status" onchange="this.form.submit()"
+                                        class="select-small">
+                                    <option value="Started"     data-i18n-status="Started"     {% if c.status=='Started'    %}selected{% endif %}>Started</option>
+                                    <option value="In Progress" data-i18n-status="In Progress" {% if c.status=='In Progress'%}selected{% endif %}>In Progress</option>
+                                    <option value="Finished"    data-i18n-status="Finished"    {% if c.status=='Finished'   %}selected{% endif %}>Finished</option>
+                                </select>
+                            </form>
+
+                            <!-- Edit (full row) -->
+                            <button type="button"
+                                    class="btn-mini"
+                                    onclick="toggleEmpCarEdit({{ c.id }})"
+                                    data-i18n="admin.edit">Modifier</button>
+
+                            <!-- Resend tracking code on WhatsApp -->
+                            <a class="btn-mini"
+                               data-i18n-title="emp.send.code"
+                               title="Envoyer le code de suivi sur WhatsApp"
+                               target="_blank" rel="noopener"
+                               href="{{ build_whatsapp_link(c.phone, wa_text('tracking', code=c.code)) }}">
+                                WhatsApp
+                            </a>
+
+                            <!-- Send reminder -->
+                            {% if c.status == 'Finished' %}
+                            <a class="btn-mini"
+                               target="_blank" rel="noopener"
+                               data-i18n-title="emp.send.reminder"
+                               title="Envoyer un rappel"
+                               href="{{ build_whatsapp_link(c.phone, wa_text('reminder', code=c.code)) }}">
+                                Rappel
+                            </a>
+                            {% endif %}
+
+                            <!-- Delete -->
+                            <form method="POST"
+                                  action="{{ url_for('employee_delete_car', car_id=c.id) }}"
+                                  onsubmit="return confirm('Supprimer la voiture #{{ c.code }} ?');"
+                                  class="inline-form">
+                                <button type="submit"
+                                        class="btn-mini danger"
+                                        data-i18n="admin.delete">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Hidden inline edit row -->
+                    <tr id="emp-car-edit-{{ c.id }}" style="display:none; background: var(--surface-alt);">
+                        <td colspan="8">
+                            <form method="POST"
+                                  action="{{ url_for('employee_update_car', car_id=c.id) }}"
+                                  class="form grid-form" style="margin-top:6px;">
+
+                                <div class="form-group">
+                                    <label data-i18n="emp.field.car_type">Type de voiture</label>
+                                    <select name="car_type" required>
+                                        <option value="Small" {% if c.car_type=='Small' %}selected{% endif %}
+                                                data-i18n="emp.opt.small">Petite</option>
+                                        <option value="Large" {% if c.car_type=='Large' %}selected{% endif %}
+                                                data-i18n="emp.opt.large">Grande</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label data-i18n="emp.field.phone">Téléphone</label>
+                                    <input type="text" name="phone" value="{{ c.phone }}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label data-i18n="emp.field.wash_type">Type de lavage</label>
+                                    <select name="wash_type" required>
+                                        {% for w, p in prices.items() %}
+                                            <option value="{{ w }}" {% if c.wash_type==w %}selected{% endif %}>
+                                                {{ w }} — {{ p }} DH
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label data-i18n="th.status">Statut</label>
+                                    <select name="status" required>
+                                        <option value="Started"     data-i18n-status="Started"     {% if c.status=='Started'     %}selected{% endif %}>Started</option>
+                                        <option value="In Progress" data-i18n-status="In Progress" {% if c.status=='In Progress' %}selected{% endif %}>In Progress</option>
+                                        <option value="Finished"    data-i18n-status="Finished"    {% if c.status=='Finished'    %}selected{% endif %}>Finished</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <button type="submit"
+                                            class="btn btn-primary"
+                                            data-i18n="admin.save">Enregistrer</button>
+                                    <button type="button"
+                                            class="btn-mini"
+                                            onclick="toggleEmpCarEdit({{ c.id }})"
+                                            data-i18n="admin.cancel">Annuler</button>
+                                </div>
+                            </form>
+                        </td>
