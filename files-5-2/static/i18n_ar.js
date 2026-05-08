@@ -5,7 +5,7 @@ window.I18N_AR = {
     "page.title.home":           "النجوم — غسيل السيارات",
     "page.title.welcome":        "النجوم — مرحباً",
     "page.title.employee_login": "دخول الموظف — النجوم",
-    "page.title.client_login":   "العميل — تتبع سيارتك",
+    "page.title.client_login":   "زبون — تتبع سيارت",
     "page.title.admin_login":    "دخول المدير — النجوم",
     "page.title.employee_dash":  "لوحة تحكم الموظف — النجوم",
     "page.title.admin_dash":     "لوحة تحكم المدير — النجوم",
@@ -20,7 +20,7 @@ window.I18N_AR = {
     "footer.text":               "— نظام إدارة غسيل السيارات",
 
     "home.welcome":              "مرحباً بكم في",
-    "home.subtitle":             "إدارة ذكية لغسيل السيارات. لا مزيد من الانتظار في الطابور. ستصلك إشعار عبر واتساب بمجرد أن تصبح سيارتك جاهزة.",
+    "home.subtitle":             "إدارة ذكية لغسيل السيارات. لا مزيد من الانتظار في الطابور. سيصلك إشعار عبر واتساب بمجرد أن تصبح سيارتك جاهزة.",
     "home.role.employee":        "موظف",
     "home.role.employee.desc":   "تسجيل السيارات وتحديث حالة الغسيل",
     "home.role.client":          "عميل",
