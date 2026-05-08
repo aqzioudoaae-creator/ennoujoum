@@ -155,3 +155,12 @@
                                 </div>
                             </form>
                         </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="empty-state" data-i18n="emp.empty">Aucune voiture enregistrée pour l'instant. Ajoutez la première ci-dessus.</p>
+        {% endif %}
+    </div>
