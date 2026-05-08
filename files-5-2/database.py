@@ -2,37 +2,16 @@
 =============================================================
  database.py - PostgreSQL setup for Mnojo (Ennoujoum)
 =============================================================
- - Connects to PostgreSQL using DATABASE_URL (Railway env var)
- - Falls back to SQLite locally if DATABASE_URL is not set
- - Creates tables: cars, employees, managers
- - Same interface as before: get_db_connection() and init_db()
-=============================================================
 """
 
 import os
 
-# ---------------------------------------------------------------
-# Detect which database to use.
-# Railway injects DATABASE_URL automatically when you add a
-# PostgreSQL plugin. Locally it is not set, so we fall back
-# to SQLite so you can still test on your laptop.
-# ---------------------------------------------------------------
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
-
-# Railway sometimes gives a URL starting with "postgres://"
-# but psycopg2 requires "postgresql://". We fix that here.
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-
 USE_POSTGRES = bool(DATABASE_URL)
 
 
-# ---------------------------------------------------------------
-# PgConnectionWrapper
-# psycopg2 does not support conn.execute() like sqlite3 does.
-# This wrapper adds that method so the rest of app.py works
-# WITHOUT any changes at all.
-# ---------------------------------------------------------------
 class PgConnectionWrapper:
     """Makes psycopg2 connection behave like sqlite3 connection."""
 
@@ -43,9 +22,8 @@ class PgConnectionWrapper:
             cursor_factory=psycopg2.extras.RealDictCursor
         )
 
-    # app.py calls conn.execute(sql, params) everywhere
     def execute(self, sql, params=()):
-        sql = sql.replace("?", "%s")   # SQLite uses ?, PostgreSQL uses %s
+        sql = sql.replace("?", "%s")
         self._cur.execute(sql, params)
         return self._cur
 
@@ -69,10 +47,6 @@ class PgConnectionWrapper:
         self.close()
 
 
-# ---------------------------------------------------------------
-# get_db_connection()
-# Single entry point used by app.py everywhere.
-# ---------------------------------------------------------------
 def get_db_connection():
     if USE_POSTGRES:
         import psycopg2
@@ -85,10 +59,6 @@ def get_db_connection():
         return conn
 
 
-# ---------------------------------------------------------------
-# init_db()
-# Creates all tables if they do not exist yet.
-# ---------------------------------------------------------------
 def init_db():
     conn = get_db_connection()
 
@@ -123,7 +93,16 @@ def init_db():
                 security_answer   TEXT
             )
         """)
-        # ADD COLUMN IF NOT EXISTS works in PostgreSQL 9.6+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS whatsapp_log (
+                id      SERIAL PRIMARY KEY,
+                phone   TEXT NOT NULL,
+                message TEXT NOT NULL,
+                time    TEXT NOT NULL,
+                code    TEXT,
+                link    TEXT
+            )
+        """)
         for col_sql in (
             "ALTER TABLE managers ADD COLUMN IF NOT EXISTS security_question TEXT",
             "ALTER TABLE managers ADD COLUMN IF NOT EXISTS security_answer   TEXT",
@@ -132,7 +111,6 @@ def init_db():
                 conn.execute(col_sql)
             except Exception:
                 pass
-
         conn.commit()
         conn.close()
         print("[DB] PostgreSQL database ready. OK")
@@ -169,6 +147,16 @@ def init_db():
                 security_answer   TEXT
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS whatsapp_log (
+                id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                phone   TEXT NOT NULL,
+                message TEXT NOT NULL,
+                time    TEXT NOT NULL,
+                code    TEXT,
+                link    TEXT
+            )
+        """)
         for col_sql in (
             "ALTER TABLE managers ADD COLUMN security_question TEXT",
             "ALTER TABLE managers ADD COLUMN security_answer   TEXT",
@@ -177,7 +165,6 @@ def init_db():
                 conn.execute(col_sql)
             except sqlite3.OperationalError:
                 pass
-
         conn.commit()
         conn.close()
         print("[DB] SQLite database ready (local mode). OK")

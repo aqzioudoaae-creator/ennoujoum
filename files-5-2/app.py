@@ -50,7 +50,6 @@ PRICES = {
 
 # In-memory log of "WhatsApp" messages (simulation only)
 # Each message: {phone, message, time, code}
-WHATSAPP_LOG = []
 
 # Initialize the database at import time so it works under gunicorn too
 # (gunicorn imports this module but does NOT execute the __main__ block).
@@ -87,18 +86,39 @@ def build_whatsapp_link(phone, message):
 
 def send_whatsapp(phone, message, code=None):
     """
-    Build a real WhatsApp click-to-chat link and log the message.
-    NO print() here - it caused OSError on Windows + Python 3.14.
+    Build a real WhatsApp click-to-chat link and save to PostgreSQL.
     """
     entry = {
-        "phone": phone,
+        "phone":   phone,
         "message": message,
-        "time": now_local().strftime("%Y-%m-%d %H:%M:%S"),
-        "code": code,
-        "link": build_whatsapp_link(phone, message),
+        "time":    now_local().strftime("%Y-%m-%d %H:%M:%S"),
+        "code":    code,
+        "link":    build_whatsapp_link(phone, message),
     }
-    WHATSAPP_LOG.append(entry)
+    try:
+        conn = get_db_connection()
+        conn.execute(
+            "INSERT INTO whatsapp_log (phone, message, time, code, link) VALUES (?, ?, ?, ?, ?)",
+            (entry["phone"], entry["message"], entry["time"], entry["code"], entry["link"])
+        )
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass  # never crash the main flow because of logging
     return entry
+
+
+def get_whatsapp_log(limit=15):
+    """Fetch the last N WhatsApp messages from the database."""
+    try:
+        conn = get_db_connection()
+        rows = conn.execute(
+            "SELECT * FROM whatsapp_log ORDER BY id DESC LIMIT ?", (limit,)
+        ).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+    except Exception:
+        return []
 
 
 # -------------------------------------------------------------
@@ -211,7 +231,7 @@ def employee_dashboard():
         pending_whatsapp=pending_whatsapp,
         build_whatsapp_link=build_whatsapp_link,
         wa_text=wa_text,
-        whatsapp_log=list(reversed(WHATSAPP_LOG[-15:])),
+        whatsapp_log=get_whatsapp_log(15),
     )
 
 
@@ -653,7 +673,7 @@ def admin_dashboard():
         pending_whatsapp=pending_whatsapp,
         build_whatsapp_link=build_whatsapp_link,
         wa_text=wa_text,
-        whatsapp_log=list(reversed(WHATSAPP_LOG[-15:]))  # last 15 messages
+        whatsapp_log=get_whatsapp_log(15)  # last 15 messages from DB
     )
 
 
