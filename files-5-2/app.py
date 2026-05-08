@@ -892,7 +892,13 @@ def admin_send_reminder(car_id):
 def logout():
     session.clear()
     flash("You have been logged out.", "success")
-    return redirect(url_for("home"))
+    response = redirect(url_for("home"))
+    # Force the browser to never cache this redirect,
+    # so the navbar always reflects the current session state.
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 # =============================================================
