@@ -84,9 +84,37 @@ def build_whatsapp_link(phone, message):
     return "https://wa.me/" + clean_phone + "?text=" + encoded_msg
 
 
+def _ensure_whatsapp_table(conn):
+    """Create whatsapp_log table if it does not exist (works for both PG and SQLite)."""
+    from database import USE_POSTGRES
+    if USE_POSTGRES:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS whatsapp_log (
+                id      SERIAL PRIMARY KEY,
+                phone   TEXT NOT NULL,
+                message TEXT NOT NULL,
+                time    TEXT NOT NULL,
+                code    TEXT,
+                link    TEXT
+            )
+        """)
+    else:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS whatsapp_log (
+                id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                phone   TEXT NOT NULL,
+                message TEXT NOT NULL,
+                time    TEXT NOT NULL,
+                code    TEXT,
+                link    TEXT
+            )
+        """)
+    conn.commit()
+
+
 def send_whatsapp(phone, message, code=None):
     """
-    Build a real WhatsApp click-to-chat link and save to PostgreSQL.
+    Build a real WhatsApp click-to-chat link and save to the database.
     """
     entry = {
         "phone":   phone,
@@ -97,14 +125,16 @@ def send_whatsapp(phone, message, code=None):
     }
     try:
         conn = get_db_connection()
+        _ensure_whatsapp_table(conn)
         conn.execute(
             "INSERT INTO whatsapp_log (phone, message, time, code, link) VALUES (?, ?, ?, ?, ?)",
             (entry["phone"], entry["message"], entry["time"], entry["code"], entry["link"])
         )
         conn.commit()
         conn.close()
-    except Exception:
-        pass  # never crash the main flow because of logging
+    except Exception as e:
+        import sys
+        print(f"[WhatsApp log ERROR] {e}", file=sys.stderr)
     return entry
 
 
@@ -112,12 +142,15 @@ def get_whatsapp_log(limit=15):
     """Fetch the last N WhatsApp messages from the database."""
     try:
         conn = get_db_connection()
+        _ensure_whatsapp_table(conn)
         rows = conn.execute(
             "SELECT * FROM whatsapp_log ORDER BY id DESC LIMIT ?", (limit,)
         ).fetchall()
         conn.close()
         return [dict(r) for r in rows]
-    except Exception:
+    except Exception as e:
+        import sys
+        print(f"[WhatsApp read ERROR] {e}", file=sys.stderr)
         return []
 
 
