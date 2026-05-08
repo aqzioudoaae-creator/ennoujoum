@@ -23,7 +23,7 @@ window.I18N_AR = {
     "home.subtitle":             "إدارة ذكية لغسيل السيارات. لا مزيد من الانتظار في الطابور. سيصلك إشعار عبر واتساب بمجرد أن تصبح سيارتك جاهزة.",
     "home.role.employee":        "موظف",
     "home.role.employee.desc":   "تسجيل السيارات وتحديث حالة الغسيل",
-    "home.role.client":          "عميل",
+    "home.role.client":          "زبون",
     "home.role.client.desc":     "تتبع سيارتك باستخدام رمزك الخاص",
     "home.role.manager":         "مدير",
     "home.role.manager.desc":    "عرض الإيرادات وإدارة الموظفين",
