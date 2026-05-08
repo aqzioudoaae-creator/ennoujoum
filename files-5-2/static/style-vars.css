@@ -1,0 +1,112 @@
+/* =========================================================
+   MNOJO — Car Wash Management System
+   Stylesheet — refined, professional theme
+   Light & Dark mode + LTR/RTL support
+   ========================================================= */
+
+/* ---------- CSS Variables : LIGHT MODE (default) ---------- */
+:root {
+    /* Soft, natural amber/yellow — easier on the eyes */
+    --yellow:        #D4A845;
+    --yellow-dark:   #B8902E;
+    --yellow-light:  #FAF3DD;
+    --yellow-soft:   rgba(212, 168, 69, .15);
+
+    --black:         #1f2328;
+    --black-soft:    #3a3f47;
+    --white:         #ffffff;
+
+    --bg:            #f5f6f8;
+    --surface:       #ffffff;
+    --surface-alt:   #fafbfc;
+
+    --border:        #e4e6ea;
+    --border-strong: #d0d3d8;
+
+    --text:          #1f2328;
+    --text-soft:     #4a5058;
+    --text-muted:    #767c85;
+
+    --green:         #2f9e6e;
+    --green-soft:    #d9f0e4;
+    --green-dark:    #1f7a52;
+    --red:           #c8463d;
+    --red-soft:      #f9e2e0;
+
+    --shadow-sm:     0 1px 3px rgba(20, 25, 35, .05);
+    --shadow-md:     0 4px 14px rgba(20, 25, 35, .07);
+    --shadow-lg:     0 10px 28px rgba(20, 25, 35, .10);
+
+    --radius:        12px;
+    --radius-sm:     8px;
+    --transition:    .2s ease;
+}
+
+/* ---------- DARK MODE ---------- */
+[data-theme="dark"] {
+    --yellow:        #E0BE5F;
+    --yellow-dark:   #C9A648;
+    --yellow-light:  #3a331f;
+    --yellow-soft:   rgba(224, 190, 95, .14);
+
+    --black:         #f0f2f5;
+    --black-soft:    #d7dae0;
+    --white:         #1a1d22;
+
+    --bg:            #14171c;
+    --surface:       #1e2128;
+    --surface-alt:   #242830;
+
+    --border:        #2e333c;
+    --border-strong: #3a4049;
+
+    --text:          #e7eaee;
+    --text-soft:     #b3b9c2;
+    --text-muted:    #858c97;
+
+    --green:         #4cc28e;
+    --green-soft:    #1e3a2c;
+    --green-dark:    #6fd4a5;
+    --red:           #e16156;
+    --red-soft:      #3d201d;
+
+    --shadow-sm:     0 1px 3px rgba(0, 0, 0, .25);
+    --shadow-md:     0 4px 14px rgba(0, 0, 0, .35);
+    --shadow-lg:     0 10px 28px rgba(0, 0, 0, .45);
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.55;
+    transition: background-color .3s ease, color .3s ease;
+}
+a { text-decoration: none; color: inherit; }
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ---------- RTL support (Arabic) ---------- */
+html[dir="rtl"] body { font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif; }
+html[dir="rtl"] .nav-links { flex-direction: row-reverse; }
+html[dir="rtl"] .card-title { border-left: none; border-right: 3px solid var(--yellow); padding-left: 0; padding-right: 10px; }
+html[dir="rtl"] .stat-card { border-left: none; border-right: 4px solid var(--yellow); }
+html[dir="rtl"] .flash { border-left: none; border-right: 4px solid var(--yellow); padding: 14px 16px 14px 40px; }
+html[dir="rtl"] .flash-close { right: auto; left: 10px; }
+html[dir="rtl"] .flash-container { right: auto; left: 20px; }
+html[dir="rtl"] .form { text-align: right; }
+html[dir="rtl"] .data-table th,
+html[dir="rtl"] .data-table td { text-align: right; }
+html[dir="rtl"] .back-link { direction: rtl; }
+html[dir="rtl"] .timeline { flex-direction: row-reverse; }
+

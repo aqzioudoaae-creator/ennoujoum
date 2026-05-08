@@ -1,0 +1,49 @@
+/* =========================================================
+   FLASH MESSAGES
+   ========================================================= */
+.flash-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 360px;
+}
+.flash {
+    background: var(--surface);
+    border-left: 4px solid var(--yellow);
+    padding: 14px 40px 14px 16px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    animation: slideIn .35s ease;
+    font-size: .92rem;
+    color: var(--text);
+}
+.flash-success { border-color: var(--green); }
+.flash-error   { border-color: var(--red); }
+.flash-close { position: absolute; right: 10px; top: 8px; cursor: pointer; color: var(--gray-text); font-size: 1.2rem; line-height: 1; }
+
+.flash-close {
+    position: absolute;
+    right: 10px; top: 8px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 1.3rem;
+    line-height: 1;
+    user-select: none;
+}
+
+/* =========================================================
+   MAIN CONTENT WRAPPER
+   ========================================================= */
+.main-content {
+    flex: 1;
+    padding: 36px 24px;
+    max-width: 1300px;
+    width: 100%;
+    margin: 0 auto;
+}
+

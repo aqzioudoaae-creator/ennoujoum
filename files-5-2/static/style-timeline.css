@@ -1,0 +1,149 @@
+/* =========================================================
+   CLIENT TIMELINE
+   ========================================================= */
+.track-page {
+    display: flex;
+    justify-content: center;
+}
+.track-card {
+    background: var(--surface);
+    padding: 36px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 800px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--yellow);
+}
+
+.track-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+.track-header h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.car-info-mini {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: var(--text-soft);
+    font-weight: 500;
+    font-size: .88rem;
+}
+.car-info-mini > div {
+    background: var(--surface-alt);
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+.car-info-mini .label { color: var(--text-muted); margin-right: 4px; font-weight: 400; }
+html[dir="rtl"] .car-info-mini .label { margin-right: 0; margin-left: 4px; }
+
+.timeline {
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
+}
+.step {
+    flex: 0 0 auto;
+    text-align: center;
+    width: 30%;
+}
+.dot {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 52px;
+    margin: 0 auto 10px;
+    transition: var(--transition);
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--border-strong);
+}
+.step-label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: .95rem;
+}
+.step-desc {
+    font-size: .8rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.step.done .dot {
+    background: var(--green);
+    color: var(--white);
+    box-shadow: 0 0 0 1px var(--green);
+}
+.step.done .step-label { color: var(--text); }
+
+.step.active .dot {
+    background: var(--yellow);
+    color: #2c2410;
+    box-shadow: 0 0 0 1px var(--yellow);
+    animation: pulseRing 1.8s infinite;
+}
+[data-theme="dark"] .step.active .dot { color: #1f2328; }
+
+.bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 3px;
+    margin: 0 4px;
+    transition: background .4s;
+    margin-bottom: 50px;
+}
+.bar.filled { background: var(--green); }
+.status-banner { padding: 15px 20px; border-radius: var(--radius-sm); text-align: center; font-weight: 600; font-size: .97rem; margin-top: 22px; border: 1px solid transparent; }
+.banner-gray   { background: #f0f0f0; color: #555; border-color: #ddd; }
+.banner-yellow { background: var(--yellow-light); color: var(--yellow-dark); border-color: var(--yellow); }
+.banner-green  { background: var(--green-soft); color: #1a6e3a; border-color: var(--green); }
+.auto-refresh-note { text-align: center; margin-top: 14px; }
+
+/* Status banner */
+.status-banner {
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-weight: 500;
+    font-size: 1rem;
+    margin-top: 20px;
+    border: 1px solid transparent;
+}
+.banner-gray {
+    background: var(--surface-alt);
+    color: var(--text-soft);
+    border-color: var(--border);
+}
+.banner-yellow {
+    background: var(--yellow-soft);
+    color: var(--yellow-dark);
+    border-color: var(--yellow);
+}
+.banner-green {
+    background: var(--green-soft);
+    color: var(--green-dark);
+    border-color: var(--green);
+}
+
+.auto-refresh-note {
+    text-align: center;
+    margin-top: 14px;
+    font-size: .82rem;
+    color: var(--text-muted);
+}
+

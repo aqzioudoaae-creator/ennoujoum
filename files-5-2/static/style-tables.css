@@ -1,0 +1,88 @@
+/* Status badges & pills */
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: .78rem;
+    display: inline-block;
+}
+.status-pill {
+    padding: 9px 16px;
+    border-radius: 24px;
+    font-weight: 500;
+    font-size: .9rem;
+    border: 1px solid transparent;
+}
+.status-summary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.status-started  {
+    background: var(--surface-alt);
+    color: var(--text-soft);
+    border-color: var(--border);
+}
+.status-progress {
+    background: var(--yellow-soft);
+    color: var(--yellow-dark);
+    border-color: var(--yellow);
+}
+.status-finished {
+    background: var(--green-soft);
+    color: var(--green-dark);
+    border-color: var(--green);
+}
+
+/* Inline form (used inside table cells) */
+.inline-form {
+    display: inline-block;
+    margin: 0 2px;
+}
+.select-small {
+    padding: 5px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font-size: .82rem;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+}
+.actions {
+    white-space: nowrap;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 30px;
+    font-style: italic;
+    font-size: .92rem;
+}
+
+/* Whatsapp log */
+.msg-list {
+    list-style: none;
+    max-height: 280px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    background: var(--surface-alt);
+}
+.msg-list li {
+    padding: 9px 10px;
+    border-bottom: 1px dashed var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: .86rem;
+    align-items: center;
+}
+.msg-list li:last-child { border-bottom: none; }
+.msg-time  { color: var(--text-muted); font-size: .78rem; }
+.msg-phone { color: var(--yellow-dark); font-weight: 600; }
+.msg-text  { flex: 1; color: var(--text); }
+
