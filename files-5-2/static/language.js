@@ -12,6 +12,8 @@ function getLang() {
 function setLang(lang) {
     if (lang !== 'fr' && lang !== 'ar') lang = 'fr';
     localStorage.setItem('mnojo_lang', lang);
+    // Sync cookie so the server (get_lang()) reads the correct language
+    document.cookie = 'mnojo_lang=' + lang + '; path=/; max-age=31536000; SameSite=Lax';
     applyLang(lang);
 }
 

@@ -99,6 +99,11 @@ window.I18N_AR = {
     "admin.whatsapp.open":       "فتح",
     "admin.default":             "افتراضي",
     "admin.delete":              "حذف",
+    "admin.edit":                "تعديل",
+    "admin.save":                "حفظ",
+    "admin.cancel":              "إلغاء",
+    "emp.btn.whatsapp":          "واتساب",
+    "emp.btn.rappel":            "تذكير",
 
     "track.title":               "تتبع سيارتك",
     "track.code":                "الرمز",

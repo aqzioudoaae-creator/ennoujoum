@@ -99,6 +99,11 @@ window.I18N_FR = {
     "admin.whatsapp.open":       "Ouvrir",
     "admin.default":             "par défaut",
     "admin.delete":              "Supprimer",
+    "admin.edit":                "Modifier",
+    "admin.save":                "Enregistrer",
+    "admin.cancel":              "Annuler",
+    "emp.btn.whatsapp":          "WhatsApp",
+    "emp.btn.rappel":            "Rappel",
 
     "track.title":               "Suivi de votre voiture",
     "track.code":                "Code",
