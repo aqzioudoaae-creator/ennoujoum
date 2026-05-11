@@ -1,6 +1,13 @@
-/* =========================================================
-   FLASH MESSAGES
-   ========================================================= */
+/* ===================================================
+   ⚡ SECTION: FLASH MESSAGES (Messages temporaires)
+   Description: Notifications toast/alertes
+   Éléments principaux:
+     - .flash-container: Conteneur des messages
+     - .flash: Message individuel
+     - .flash-success: Message de succès (vert)
+     - .flash-error: Message d'erreur (rouge)
+     - .flash-close: Bouton fermeture
+   =================================================== */
 .flash-container {
     position: fixed;
     top: 80px;
@@ -36,9 +43,10 @@
     user-select: none;
 }
 
-/* =========================================================
-   MAIN CONTENT WRAPPER
-   ========================================================= */
+/* ===================================================
+   📦 SECTION: MAIN CONTENT WRAPPER (Contenu principal)
+   Description: Conteneur principal du contenu
+   =================================================== */
 .main-content {
     flex: 1;
     padding: 36px 24px;

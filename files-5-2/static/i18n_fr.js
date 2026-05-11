@@ -1,3 +1,17 @@
+/* ===================================================
+   i18n_fr.js - FRENCH TRANSLATIONS (Traductions FR)
+   Description: Dictionnaire complet des textes en français
+   Clés principales:
+     - page.title.*: Titres de pages
+     - nav.*: Eléments de navigation
+     - home.*: Textes de la page d'accueil
+     - login.*: Formulaires de connexion
+     - emp.*: Dashboards employés
+     - admin.*: Dashboards admin/manager
+     - status.*: Statuts de lavage
+     - common.*: Textes courants
+   Appelé par: language.js (applyLang, setLang, toggleLang)
+   =================================================== */
 /* =========================================================
    i18n_fr.js — Traductions françaises
    ========================================================= */

@@ -1,6 +1,13 @@
-/* =========================================================
-   NAVBAR
-   ========================================================= */
+/* ===================================================
+   🔝 SECTION: NAVBAR (Barre de navigation)
+   Description: Styles de la barre de navigation supérieure
+   Éléments principaux:
+     - .navbar: Conteneur principal
+     - .logo: Logo de l'application
+     - .nav-links: Liens de navigation
+     - .user-tag: Badge utilisateur
+     - .btn-logout: Bouton de déconnexion
+   =================================================== */
 .navbar {
     background: var(--surface);
     color: var(--text);

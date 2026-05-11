@@ -1,6 +1,14 @@
-/* =========================================================
-   DASHBOARDS
-   ========================================================= */
+/* ===================================================
+   📊 SECTION: DASHBOARDS
+   Description: Styles pour les tableaux de bord
+   Éléments principaux:
+     - .dashboard-header: En-tête du dashboard
+     - .card: Cartes de contenu
+     - .stats-grid: Grille de statistiques
+     - .stat-card: Carte statistique individuelle
+     - .data-table: Tableau de données
+     - .code-badge: Badge pour les codes
+   =================================================== */
 .dashboard-header {
     margin-bottom: 26px;
 }

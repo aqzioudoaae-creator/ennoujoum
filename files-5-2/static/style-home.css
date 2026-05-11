@@ -1,6 +1,14 @@
-/* =========================================================
-   HOME / HERO
-   ========================================================= */
+/* ===================================================
+   🏠 SECTION: HOME / HERO (Page d'accueil)
+   Description: Styles pour la section héro et rôles
+   Éléments principaux:
+     - .hero: Section principale
+     - .hero-title: Titre principal
+     - .hero-subtitle: Sous-titre
+     - .role-cards: Grille de cartes des rôles
+     - .role-card: Carte de rôle individual
+     - .role-btn: Bouton dans la carte
+   =================================================== */
 .hero {
     text-align: center;
     padding: 30px 0;
@@ -73,9 +81,16 @@
 [data-theme="dark"] .role-btn { color: #1f2328; }
 [data-theme="dark"] .role-card:hover .role-btn { color: #1f2328; }
 
-/* =========================================================
-   LOGIN PAGES
-   ========================================================= */
+/* ===================================================
+   🔐 SECTION: LOGIN PAGES (Pages de connexion)
+   Description: Styles pour les pages de connexion
+   Éléments principaux:
+     - .login-page: Conteneur de la page
+     - .login-card: Carte de connexion
+     - .muted: Texte atténué
+     - .hint: Zone d'aide/conseil
+     - .back-link: Lien de retour
+   =================================================== */
 .login-page {
     min-height: 70vh;
     display: flex;

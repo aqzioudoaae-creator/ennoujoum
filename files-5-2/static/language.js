@@ -1,3 +1,13 @@
+/* ===================================================
+   🇦 SECTION: LANGUAGE MANAGEMENT (Gestion langues)
+   Description: Gestion du/de la français et arabe + RTL
+   Dépend de: i18n_fr.js, i18n_ar.js
+   Fonctions principales:
+     - getLang(): Récupérer la langue actuelle
+     - setLang(lang): Changer la langue
+     - applyLang(lang): Appliquer la langue à la page
+     - toggleLang(): Basculer FR <-> AR
+   =================================================== */
 /* =========================================================
    language.js — Gestion de la langue (FR / AR + RTL)
    Dépend de : i18n_fr.js, i18n_ar.js

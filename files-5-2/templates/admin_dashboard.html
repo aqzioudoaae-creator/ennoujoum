@@ -2,6 +2,20 @@
 
 {% block title %}Tableau de bord Manager — Ennoujoum{% endblock %}
 
+<!-- ===================================================
+     ADMIN DASHBOARD - Tableau de bord Manager
+     Description: Interface complète de gestion système
+     Sections incluses:
+       - HEADER: Titre + description
+       - STATS: _admin_stats.html (Statistiques KPI)
+       - CAR MGMT: _admin_cars.html, _admin_add_car.html
+       - EMP MGMT: _admin_employees.html (liste + actions)
+       - MANAGER MGMT: _admin_managers.html
+       - WHATSAPP: _admin_whatsapp.html (log messages)
+     Variables: current_user, cars, employees, stats
+     Actions: Add/Edit/Delete cars, Manage staff, View analytics
+     =================================================== -->
+
 {% block content %}
 <section class="dashboard">
 

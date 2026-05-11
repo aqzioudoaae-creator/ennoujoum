@@ -1,3 +1,16 @@
+/* ===================================================
+   💫 SECTION: TABLES & STATUS ELEMENTS
+   Description: Styles pour les tableaux et badges de statut
+   Éléments principaux:
+     - .status-badge: Petit badge de statut
+     - .status-pill: Pilule de statut étendue
+     - .status-summary: Conteneur de statuts
+     - .status-started / .status-progress / .status-finished: Variantes
+     - .inline-form: Formulaires en ligne dans les cellules
+     - .select-small: Sélecteur mini
+     - .empty-state: État vide
+     - .msg-list: Liste de messages WhatsApp
+   =================================================== */
 /* Status badges & pills */
 .status-badge {
     padding: 4px 12px;

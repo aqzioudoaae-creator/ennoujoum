@@ -1,4 +1,12 @@
-/* ---------- Theme + Language toggles ---------- */
+/* ===================================================
+   📂 SECTION: THEME & LANGUAGE TOGGLES (Boutons de contrôle)
+   Description: Boutons bascule pour thème et langue
+   Éléments principaux:
+     - .nav-controls: Conteneur des boutons
+     - .icon-btn: Bouton d'icône (thème)
+     - .lang-btn: Bouton de langue (FR / AR)
+     - .icon-sun / .icon-moon: Icônes CSS pures
+   =================================================== */
 .nav-controls {
     display: flex;
     align-items: center;

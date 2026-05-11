@@ -2,6 +2,17 @@
 
 {% block title %}Client — Suivez votre voiture{% endblock %}
 
+<!-- ===================================================
+     CLIENT LOGIN PAGE - Connexion client/suivi
+     Description: Page d'accès au suivi par code unique
+     Champs formulaire:
+       - code: Code 3 chiffres (input numeric + validation main.js)
+     Validation: Automatique - input "code" uniquement 3 chiffres
+     Boutons: Suivre, Retour accueil
+     Classes: .login-page, .login-card
+     Style spécial: Code affiché grand (1.5rem, spacing 6px)
+     =================================================== -->
+
 {% block content %}
 <section class="login-page">
     <div class="login-card fade-in">

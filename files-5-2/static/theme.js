@@ -1,9 +1,19 @@
+/* ===================================================
+   THEME MANAGEMENT (Gestion light / dark mode)
+   Description: Gestion du thème clair/sombre
+   Fonctions principales:
+     - getTheme(): Récupérer le thème actuel (défaut: 'light')
+     - setTheme(theme): Définir le thème ('light' ou 'dark')
+     - toggleTheme(): Basculer entre light <-> dark
+     - earlyTheme(): Appliquer le thème AVANT le rendu (pas de flash)
+   Stockage: localStorage 'mnojo_theme'
+   =================================================== */
 /* =========================================================
    theme.js — Gestion du thème (light / dark)
    ========================================================= */
 
 function getTheme() {
-    return localStorage.getItem('mnojo_theme') || 'light';
+    return localStorage.getItem('mnojo_theme') || 'dark';
 }
 
 function setTheme(theme) {
@@ -19,7 +29,7 @@ function toggleTheme() {
 /* Apply theme immediately before paint to avoid flash */
 (function earlyTheme() {
     try {
-        var t = localStorage.getItem('mnojo_theme') || 'light';
+        var t = localStorage.getItem('mnojo_theme') || 'dark';
         var l = localStorage.getItem('mnojo_lang')  || 'fr';
         document.documentElement.setAttribute('data-theme', t);
         document.documentElement.setAttribute('lang', l);

@@ -1,9 +1,16 @@
-/* =========================================================
-   MNOJO — Car Wash Management System
-   Stylesheet — refined, professional theme
-   Light & Dark mode + LTR/RTL support
-   ========================================================= */
-
+/* ===================================================
+   🍳 SECTION: CSS VARIABLES & THEME
+   Description: Variables CSS pour le système de couleurs
+   Sections:
+     - LIGHT MODE: Thème clair (par défaut)
+     - DARK MODE: Thème sombre
+     - RTL SUPPORT: Support pour l'arabe (droite à gauche)
+   Variables principales:
+     - Colors: --yellow, --green, --red, --black, --white
+     - Spacing: --radius, --radius-sm
+     - Shadows: --shadow-sm, --shadow-md, --shadow-lg
+     - Text: --text, --text-soft, --text-muted
+   =================================================== */
 /* ---------- CSS Variables : LIGHT MODE (default) ---------- */
 :root {
     /* Soft, natural amber/yellow — easier on the eyes */

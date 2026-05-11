@@ -1,3 +1,15 @@
+/* ===================================================
+   INIT & DOM EVENTS (Initialisation & événements DOM)
+   Description: Point d'entrée principal - initialisation DOM
+   Dépend de: theme.js, language.js
+   Fonctions:
+     - Appliquer les traductions (i18n)
+     - Initialiser le toggle thème
+     - Initialiser le toggle langue
+     - Auto-dismiss des messages flash
+     - Confirmation avant logout
+     - Validation input code (3 chiffres max)
+   =================================================== */
 /* =========================================================
    main.js — Initialisation DOM et interactions
    Dépend de : theme.js, language.js

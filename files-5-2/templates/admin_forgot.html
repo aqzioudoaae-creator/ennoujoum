@@ -2,6 +2,17 @@
 
 {% block title %}Mot de passe oublié — Ennoujoum{% endblock %}
 
+<!-- ===================================================
+     PASSWORD RESET PAGE - Réinitialisation mot de passe
+     Description: Processus 2 étapes pour réinitialiser mot de passe
+     Étapes:
+       - STEP 1: Vérification du nom d'utilisateur
+       - STEP 2: Répondre à la question sécurité + nouveau password
+     Variables: step (1 ou 2), username, security_question
+     Messages d'erreur: Affichés si réponse incorrecte
+     Boutons: Suivant, Réinitialiser, Retour
+     =================================================== -->
+
 {% block content %}
 <section class="login-page">
     <div class="login-card fade-in">

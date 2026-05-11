@@ -2,6 +2,19 @@
 
 {% block title %}Suivi #{{ car.code }} — Ennoujoum{% endblock %}
 
+<!-- ===================================================
+     CLIENT TRACKING PAGE - Suivi en temps réel
+     Description: Page de suivi du statut de lavage voiture
+     Sections:
+       - HEADER: Titre + infos mini voiture (type, lavage, prix)
+       - TIMELINE: 4 étapes animées (Started, In Progress, Finished, Ready)
+       - DOTS: Indicateurs visuels (gris, jaune, vert)
+       - STATUS BANNER: Message final selon le statut
+       - AUTO-REFRESH: Mise à jour auto toutes les 5s
+     Variables: car.code, car.status, car.car_type, etc.
+     Animations: Timeline pulse quand status actif
+     =================================================== -->
+
 {% block content %}
 <section class="track-page">
     <div class="track-card fade-in">

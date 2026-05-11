@@ -1,3 +1,13 @@
+/* ===================================================
+   TABLE SEARCH & FILTER (Recherche et filtrage tableaux)
+   Description: Filtrage/recherche dans les tableaux
+   Fonction principale:
+     - filterTable(inputId, tableId, emptyMsgId)
+       Filtre les lignes en matching 'data-search' avec la requête
+       Cache aussi les formulaires édition en ligne quand parent caché
+   Utilisation:
+     <input id="search" onkeyup="filterTable('search', 'table', 'empty-msg')" />
+   =================================================== */
 /* =========================================================
    ENNOUJOUM — Table search / filter
    Filters table rows by matching a query against each row's

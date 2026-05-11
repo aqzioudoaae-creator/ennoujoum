@@ -1,6 +1,15 @@
-/* =========================================================
-   FORMS
-   ========================================================= */
+/* ===================================================
+   📝 SECTION: FORMS (Formulaires)
+   Description: Styles pour tous les formulaires
+   Éléments principaux:
+     - .form: Conteneur du formulaire
+     - .form-group: Groupe de champs
+     - .grid-form: Mise en page en grille
+     - .price-box: Affichage du prix
+     - .btn: Boutons généraux
+     - .btn-primary: Bouton principal
+     - .btn-mini: Petit bouton
+   =================================================== */
 .form {
     margin-top: 22px;
     text-align: left;

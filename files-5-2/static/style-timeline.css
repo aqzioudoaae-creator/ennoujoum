@@ -1,6 +1,14 @@
-/* =========================================================
-   CLIENT TIMELINE
-   ========================================================= */
+/* ===================================================
+   📊 SECTION: CLIENT TIMELINE (Suivi de voiture)
+   Description: Page de suivi en temps réel du lavage
+   Éléments principaux:
+     - .track-page: Conteneur principal
+     - .track-card: Carte de suivi
+     - .track-header: En-tête avec infos voiture
+     - .timeline: Timeline des étapes
+     - .step: Étape individuelle (dot + label)
+     - .status-banner: Banner de statut (gris/jaune/vert)
+   =================================================== */
 .track-page {
     display: flex;
     justify-content: center;

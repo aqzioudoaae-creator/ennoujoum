@@ -2,6 +2,18 @@
 
 {% block title %}Inscription Manager — Ennoujoum{% endblock %}
 
+<!-- ===================================================
+     ADMIN REGISTER PAGE - Inscription manager
+     Description: Page d'inscription pour nouveaux managers
+     Champs formulaire:
+       - username: Nom d'utilisateur (min 3 caractères)
+       - password: Mot de passe (min 4 caractères)
+       - security_question: Question de sécurité (pour reset)
+       - security_answer: Réponse (pour reset)
+     Notes: Compte doit être approué par un manager existant
+     Boutons: Créer compte, Retour accueil
+     =================================================== -->
+
 {% block content %}
 <section class="login-page">
     <div class="login-card fade-in">
