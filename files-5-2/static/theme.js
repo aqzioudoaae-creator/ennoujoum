@@ -13,7 +13,7 @@
    ========================================================= */
 
 function getTheme() {
-    return localStorage.getItem('mnojo_theme') || 'dark';
+    return localStorage.getItem('mnojo_theme') || 'light';
 }
 
 function setTheme(theme) {
@@ -29,7 +29,7 @@ function toggleTheme() {
 /* Apply theme immediately before paint to avoid flash */
 (function earlyTheme() {
     try {
-        var t = localStorage.getItem('mnojo_theme') || 'dark';
+        var t = localStorage.getItem('mnojo_theme') || 'light';
         var l = localStorage.getItem('mnojo_lang')  || 'fr';
         document.documentElement.setAttribute('data-theme', t);
         document.documentElement.setAttribute('lang', l);
